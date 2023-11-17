@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.transaction-list-table {
+  @apply w-full;
+
+  thead {
+    @apply text-center;
+
+    tr {
+      @apply py-2;
+    }
+  }
+
+  tbody {
+    tr {
+      @apply text-center shadow rounded-full py-2;
+
+      td {
+        @apply py-2;
+      }
+    }
+  }
+}
+
+.pagination-control {
+  @apply flex items-center justify-between pt-4;
+
+  .page-button {
+    @apply flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700;
+
+    &__next {
+      @apply rounded-r-lg;
+    }
+
+    &__prev {
+      @apply rounded-l-lg;
+    }
+
+    &__disabled {
+      @apply cursor-default opacity-50 pointer-events-none;
+    }
+  }
+}

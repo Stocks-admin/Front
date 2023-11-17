@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .form-group {
+    @apply mb-4;
+
+    label {
+      @apply w-full block font-semibold pl-3;
+    }
+
+    select,
+    input {
+      @apply w-full rounded-full border-0 shadow-md;
+    }
+
+    .is-invalid {
+      @apply border-red-500 border;
+    }
+  }
+
+  .form-group:last-of-type {
+    @apply mb-2;
+  }
+
+  .btn-primary {
+    @apply rounded bg-gradient text-white px-3 py-2;
+  }
+
+  .btn-secondary {
+    @apply rounded-full border-transparent border-2 px-3 py-2;
+
+    background: linear-gradient(white, white) padding-box,
+      linear-gradient(
+          143deg,
+          rgba(241, 114, 142, 1) 18%,
+          rgba(101, 106, 253, 1) 74%,
+          rgba(45, 105, 255, 1) 100%
+        )
+        border-box;
+  }
+}
+
+.bg-gradient {
+  background: rgb(241, 114, 142);
+  background: linear-gradient(
+    143deg,
+    rgba(241, 114, 142, 1) 18%,
+    rgba(101, 106, 253, 1) 74%,
+    rgba(45, 105, 255, 1) 100%
+  );
+}

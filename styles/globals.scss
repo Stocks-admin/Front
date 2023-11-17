@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "./tailwindComponents";
+@import "./transactionList";
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > div {
+  flex-grow: 1;
+}
+
+input.no-arrow::-webkit-calendar-picker-indicator {
+  display: none;
+}

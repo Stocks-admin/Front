@@ -1,0 +1,43 @@
+interface ToggleSwitchProps {
+  option1: string;
+  option2: string;
+  selected: 0 | 1;
+  onChange?: (selected: 0 | 1) => void;
+}
+
+const ToggleSwitch = ({
+  option1,
+  option2,
+  selected = 0,
+  onChange,
+}: ToggleSwitchProps) => {
+  const handleClick = (selected: 0 | 1) => {
+    onChange && onChange(selected);
+  };
+
+  return (
+    <label
+      htmlFor={`toggle-${option1}-${option2}`}
+      className="inline-flex items-center rounded-full cursor-pointer text-[#cbcbcb] bg-white font-semibold shadow-lg px-2 py-1"
+    >
+      <span
+        className={`px-4 py-2 rounded-full ${
+          selected === 0 && "bg-gradient font-bold text-white"
+        }`}
+        onClick={() => handleClick(0)}
+      >
+        {option1}
+      </span>
+      <span
+        className={`px-4 py-2 rounded-full ${
+          selected === 1 && "bg-gradient font-bold text-white"
+        }`}
+        onClick={() => handleClick(1)}
+      >
+        {option2}
+      </span>
+    </label>
+  );
+};
+
+export default ToggleSwitch;
