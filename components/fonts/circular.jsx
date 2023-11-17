@@ -13,12 +13,12 @@ const circular = localFont({
       style: "italic",
     },
     {
-      path: "../../public/fonts/circular/CircularStd-medium.otf",
+      path: "../../public/fonts/circular/CircularStd-Medium.otf",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../public/fonts/circular/CircularStd-mediumItalic.otf",
+      path: "../../public/fonts/circular/CircularStd-MediumItalic.otf",
       weight: "500",
       style: "italic",
     },
