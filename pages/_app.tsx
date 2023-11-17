@@ -2,7 +2,6 @@ import { persistor, store } from "@/redux/store";
 import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
-import { persistStore } from "redux-persist";
 import { NextAdapter } from "next-query-params";
 import { PersistGate } from "redux-persist/integration/react";
 import { QueryParamProvider } from "use-query-params";
