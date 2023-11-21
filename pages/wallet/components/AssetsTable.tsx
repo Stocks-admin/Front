@@ -1,7 +1,7 @@
 import useMoneyTextGenerator from "@/hooks/useMoneyTextGenerator";
 import { UserPortfolio } from "@/models/userModel";
 import Image from "next/image";
-import noImage from "@/public/images/noImage.jpg";
+import noImage from "@/public/static/images/noImage.jpg";
 
 interface AssetsTableProps {
   assets: UserPortfolio;

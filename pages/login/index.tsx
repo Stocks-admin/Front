@@ -1,7 +1,7 @@
 import FullWidthLayout from "@/components/Layout/FullWidthLayout";
 import FormWrapper from "./components/FormWrapper";
 import Image from "next/image";
-import login_text from "./assets/login-text.png";
+import login_text from "@/public/static/images/login-text.png";
 
 const Login = () => {
   return (
