@@ -16,6 +16,9 @@ import {
 import useLogout from "@/hooks/useLogout";
 import useMoneyTextGenerator from "@/hooks/useMoneyTextGenerator";
 import CreateTransaction from "./components/CreateTransaction";
+import { useToast } from "@/hooks/useToast";
+import { createFakeTransactions } from "@/services/transactionServices";
+import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -28,6 +31,9 @@ const Wallet = () => {
     shallowEqual
   );
   const logout = useLogout();
+  const [notify] = useToast();
+  const [updatePortfolio] = useUpdatePortfolio();
+
   useEffect(() => {
     if (portfolio.status !== "success" && portfolio.status !== "loading") {
       dispatch(setPortfolioStatus("loading"));
@@ -38,6 +44,7 @@ const Wallet = () => {
         })
         .catch((err) => {
           dispatch(setPortfolioStatus("failed"));
+          notify("Error al obtener el portfolio", "error");
           logout();
         });
     }
@@ -69,9 +76,23 @@ const Wallet = () => {
     setCurrencySelected(option);
   };
 
+  const createTransactions = () => {
+    createFakeTransactions()
+      .then((res) => {
+        notify("Transacciones creadas correctamente", "success");
+        updatePortfolio();
+      })
+      .catch((err) => {
+        notify("Error al crear transacciones", "error");
+      });
+  };
+
   return (
     <SidebarLayout>
       <div className="flex justify-end my-3">
+        <button onClick={createTransactions} className="btn-secondary">
+          Crear transacciones falsas
+        </button>
         <ToggleSwitch
           option1="$"
           option2="%"

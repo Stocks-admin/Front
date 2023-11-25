@@ -30,19 +30,22 @@ const SymbolInput = ({ setValue }: IProps) => {
         .catch((err) => {
           setSymbolsFound([]);
         });
-    }, 1000),
+    }, 500),
     []
   );
 
-  const onSelectOption = (symbol: string) => {
+  const onSelectOption = (symbol: string, market: string) => {
     setValue("symbol", symbol);
-    setIsSearchOpen(false);
+    setValue("market", market.toLowerCase());
     setInputValue(symbol);
+    setIsSearchOpen(false);
   };
 
   useEffect(() => {
     if (inputValue !== "") handleSearch(inputValue);
   }, [inputValue]);
+
+  let symbolType = "";
 
   return (
     <div className="relative">
@@ -63,35 +66,38 @@ const SymbolInput = ({ setValue }: IProps) => {
         <div className="absolute top-10 left-0 w-full bg-white rounded-lg shadow-lg">
           {symbolsFound.length > 0 &&
             symbolsFound.map((symbol) => (
-              <div
-                className="flex items-center p-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
-                key={symbol.symbol}
-                onClick={() => onSelectOption(symbol.symbol)}
-              >
-                {(symbol?.logo || symbol.type === "Currency") && (
-                  <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 mr-3 bg-gray-200 rounded-full">
-                    <img
-                      src={symbol?.logo || dollarSign.src}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
+              <>
+                {symbol.market !== symbolType &&
+                  (symbolType = symbol.market) && (
+                    <div className="flex items-center p-2 border-b border-dashed border-gray-200">
+                      <span className="text-sm font-light text-center">
+                        {symbol.market}
+                      </span>
+                    </div>
+                  )}
+                <div
+                  className="flex items-center p-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+                  key={symbol.symbol}
+                  onClick={() => onSelectOption(symbol.symbol, symbol.market)}
+                >
+                  {(symbol?.logo || symbol.type === "Currency") && (
+                    <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 mr-3 bg-gray-200 rounded-full">
+                      <img
+                        src={symbol?.logo || dollarSign.src}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">{symbol.symbol}</span>
+                    <span className="text-xs text-gray-400">
+                      {symbol.full_name}
+                    </span>
                   </div>
-                )}
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold">{symbol.symbol}</span>
-                  <span className="text-xs text-gray-400">
-                    {symbol.full_name}
-                  </span>
                 </div>
-              </div>
+              </>
             ))}
-          {symbolsFound.length < 10 && (
-            <div className="flex items-center p-2 border-t border-slate-900 border-dashed cursor-pointer hover:bg-gray-100">
-              <div className="flex flex-col">
-                <button>+ Crear simbolo</button>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
