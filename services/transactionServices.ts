@@ -11,3 +11,7 @@ interface createTransactionBody {
 export const createTransaction = (body: createTransactionBody) => {
   return axiosInstance.post("transactions/createTransaction", body);
 };
+
+export const createFakeTransactions = () => {
+  return axiosInstance.post("fake-transactions");
+};

@@ -1,6 +1,5 @@
 import { UserPortfolio } from "@/models/reduxModel";
 import { UserStock } from "@/models/userModel";
-import { getUserPortfolio } from "@/services/userServices";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -18,19 +17,6 @@ export const portfolioSlice = createSlice({
   name: "portfolio",
   initialState,
   reducers: {
-    updatePortfolio: (state) => {
-      getUserPortfolio()
-        .then((res) => {
-          if (res.status === 200) {
-            return { stocks: res.data, status: "success" };
-          } else {
-            return { stocks: [], status: "failed" };
-          }
-        })
-        .catch((err) => {
-          return { stocks: [], status: "failed" };
-        });
-    },
     setPortfolio: (state, action: PayloadAction<UserStock[]>) => {
       return { stocks: action.payload, status: "success" };
     },
@@ -50,7 +36,6 @@ export const portfolioSlice = createSlice({
 });
 
 export const {
-  updatePortfolio,
   setPortfolio,
   addToPortfolio,
   setPortfolioStatus,

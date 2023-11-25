@@ -14,4 +14,5 @@ export type SymbolQuery = {
   full_name?: string;
   logo?: string;
   type: string;
+  market: string;
 };

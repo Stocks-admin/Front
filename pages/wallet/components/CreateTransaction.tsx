@@ -1,6 +1,5 @@
 import BottomCard from "@/components/BottomCard";
 import { useToast } from "@/hooks/useToast";
-import { updatePortfolio } from "@/redux/slices/portfolioSlice";
 import { searchSymbol } from "@/services/searchServices";
 import { createTransaction } from "@/services/transactionServices";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,6 +10,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import SymbolInput from "./SymbolInput";
+import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
 
 const schema = yup.object().shape({
   type: yup
@@ -33,6 +33,7 @@ interface IProps {
 const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
   const [notify] = useToast();
   const dispatch = useDispatch();
+  const [updatePortfolio] = useUpdatePortfolio();
 
   const {
     register,
@@ -61,7 +62,7 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
     try {
       const transaction = await createTransaction(body);
       if (transaction.status === 200) {
-        dispatch(updatePortfolio());
+        updatePortfolio();
         setIsSheetOpen(false);
         return notify("Transaccion creada correctamente", "success");
       }
@@ -112,9 +113,10 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
               {...register("market")}
               defaultValue="nasdaq"
             >
-              <option value="nasdaq">Nasdaq</option>
-              <option value="nyse">Nyse</option>
-              <option value="buenos aires">Bcba</option>
+              <option value="nasdaq">NASDAQ</option>
+              <option value="nyse">NYSE</option>
+              <option value="bcba">BCBA</option>
+              <option value="cedears">CEDEARS</option>
             </select>
             <p className="text-danger">{errors.market?.message}</p>
           </div>
