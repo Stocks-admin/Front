@@ -1,10 +1,8 @@
 import SidebarLayout from "@/components/Layout/SidebarLayout";
 import { Transaction } from "@/models/transactionModel";
 import { getUserTransactions } from "@/services/userServices";
-import moment from "moment";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { NumberParam, useQueryParam } from "use-query-params";
 import TransactionList from "./components/transactionList";
@@ -20,17 +18,17 @@ const Transactions = (props: IProps) => {
   const [transactions, setTransactions] = useState(transactionsParams);
   const [fetchedPage, setFetchedPage] = useState(1);
   const [page, setPage] = useQueryParam("page", NumberParam);
-
   const [currencySelected, setCurrencySelected] = useState<0 | 1>(0);
 
   useEffect(() => {
     if (!page) {
-      setPage(1);
+      return setPage(1);
     }
     if (page && page !== fetchedPage) {
       setFetchedPage(page);
       getUserTransactions({
-        page: page || 1,
+        limit: 10,
+        offset: (page || 1) * 10 - 10,
       }).then((res) => {
         setTransactions(res.data.transactions);
       });
@@ -76,10 +74,15 @@ export const getServerSideProps = async ({
     };
   }
   const { page } = query;
-
+  let offset = 0;
+  if (page && typeof page === "string") {
+    offset = parseInt(page) * 10 - 10;
+  }
   const resp = await getUserTransactions({
     token: session.user.accessToken,
-    page: page && typeof page === "string" ? parseInt(page) : 1,
+    // page: page && typeof page === "string" ? parseInt(page) : 1,
+    limit: 10,
+    offset,
   });
   if (resp.status === 401) {
     return {

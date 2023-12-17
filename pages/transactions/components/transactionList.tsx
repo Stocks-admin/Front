@@ -71,7 +71,7 @@ const TransactionList = ({
           <li>
             <Link
               className={`page-button page-button__next ${
-                page <= totalTransactions / 10 && "page-button__disabled"
+                page >= totalTransactions / 10 && "page-button__disabled"
               }`}
               href={`?page=${page < totalTransactions / 10 ? page + 1 : page}`}
             >
