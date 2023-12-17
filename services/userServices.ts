@@ -17,16 +17,22 @@ export const getUserWallet = async (token: string = "") => {
 };
 
 interface ITransaction {
-  page?: number;
+  offset?: number;
+  limit?: number;
   token?: string;
 }
-export const getUserTransactions = async ({ page, token }: ITransaction) => {
-  return await axiosInstance.get(
-    `transactions/userTransactions${page && `?page=${page}`}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+export const getUserTransactions = async ({
+  offset,
+  limit,
+  token,
+}: ITransaction) => {
+  return await axiosInstance.get("transactions/userTransactions", {
+    params: {
+      offset,
+      limit,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
