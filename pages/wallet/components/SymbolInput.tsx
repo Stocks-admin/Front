@@ -4,6 +4,7 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { UseFormSetValue } from "react-hook-form";
 import dollarSign from "../assets/dollar-sign.png";
+import useClickOutside from "@/hooks/useClickOutside";
 
 interface IProps {
   setValue: UseFormSetValue<any>;
@@ -13,6 +14,7 @@ const SymbolInput = ({ setValue }: IProps) => {
   const [inputValue, setInputValue] = useState("");
   const [symbolsFound, setSymbolsFound] = useState<SymbolQuery[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const refSearch = useClickOutside(() => setIsSearchOpen(false));
 
   const handleSearch = useCallback(
     debounce((value: string) => {
@@ -35,6 +37,7 @@ const SymbolInput = ({ setValue }: IProps) => {
   );
 
   const onSelectOption = (symbol: string, market: string) => {
+    console.log(symbol, market);
     setValue("symbol", symbol);
     setValue("market", market.toLowerCase());
     setInputValue(symbol);
@@ -48,7 +51,7 @@ const SymbolInput = ({ setValue }: IProps) => {
   let symbolType = "";
 
   return (
-    <div className="relative">
+    <div className="relative" ref={refSearch}>
       <input
         className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
         type="text"
@@ -57,9 +60,6 @@ const SymbolInput = ({ setValue }: IProps) => {
         onChange={(e) => setInputValue(e.target.value)}
         onFocus={() => {
           setIsSearchOpen(inputValue.length > 0);
-        }}
-        onBlur={() => {
-          setIsSearchOpen(false);
         }}
       />
       {isSearchOpen && (

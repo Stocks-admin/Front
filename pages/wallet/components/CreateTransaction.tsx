@@ -11,6 +11,10 @@ import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import SymbolInput from "./SymbolInput";
 import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
+import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { getSymbolPrice } from "@/services/stockServices";
 
 const schema = yup.object().shape({
   type: yup
@@ -32,21 +36,22 @@ interface IProps {
 
 const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
   const [notify] = useToast();
-  const dispatch = useDispatch();
   const [updatePortfolio] = useUpdatePortfolio();
+  const [priceBlocked, setPriceBlocked] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       symbol: "",
       amount: 0,
       price: 0,
-      date: new Date(),
+      date: moment().toDate(),
     },
   });
 
@@ -72,6 +77,24 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
         error?.response?.data?.error || "Ocurrio un error inesperado",
         "error"
       );
+    }
+  };
+
+  const searchSymbolPrice = async () => {
+    setPriceBlocked(true);
+    try {
+      const symbol = watch("symbol");
+      if (!symbol) return setPriceBlocked(false);
+      const date =
+        moment(watch("date")).format("YYYY-MM-DD") ||
+        moment().format("YYYY-MM-DD");
+      const market = watch("market") || "nASDAQ";
+      const symbolPrice = await getSymbolPrice(symbol, market, date);
+      if (symbolPrice.status === 200) setValue("price", symbolPrice.data.value);
+      setPriceBlocked(false);
+    } catch (error) {
+      setPriceBlocked(false);
+      return notify("No se pudo obtener el valor del simbolo", "error");
     }
   };
 
@@ -125,7 +148,7 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
             <label htmlFor="amount">Cantidad</label>
             <input
               type="number"
-              step={0.01}
+              step={1}
               className={`form-control ${errors.amount?.message && "error"}`}
               id="amount"
               {...register("amount")}
@@ -135,12 +158,23 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
 
           <div className="form-group">
             <label htmlFor="price">Precio</label>
-            <input
-              type="number"
-              className={`form-control ${errors.price?.message && "error"}`}
-              id="price"
-              {...register("price")}
-            />
+            <div className="flex justify-between items-center">
+              <input
+                type="number"
+                step={0.01}
+                className={`form-control flex-1 ${
+                  errors.price?.message && "error"
+                }`}
+                id="price"
+                disabled={priceBlocked}
+                {...register("price")}
+              />
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="px-2"
+                onClick={searchSymbolPrice}
+              />
+            </div>
             <p className="text-danger">{errors.price?.message}</p>
           </div>
 
