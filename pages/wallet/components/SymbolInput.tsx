@@ -37,7 +37,6 @@ const SymbolInput = ({ setValue }: IProps) => {
   );
 
   const onSelectOption = (symbol: string, market: string) => {
-    console.log(symbol, market);
     setValue("symbol", symbol);
     setValue("market", market.toLowerCase());
     setInputValue(symbol);
