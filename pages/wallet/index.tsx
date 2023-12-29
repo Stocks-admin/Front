@@ -19,6 +19,7 @@ import CreateTransaction from "./components/CreateTransaction";
 import { useToast } from "@/hooks/useToast";
 import { createFakeTransactions } from "@/services/transactionServices";
 import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
+import Link from "next/link";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -131,7 +132,7 @@ const Wallet = () => {
           variationType={variationSelected === 0 ? "nominal" : "percentage"}
         />
       </div>
-      <div className="mt-3">
+      <div className="mt-3 flex gap-5 items-center">
         <button
           className="btn-primary rounded-full flex items-center"
           onClick={() => setIsCardOpen(true)}
@@ -139,6 +140,9 @@ const Wallet = () => {
           Agregar activo
           <FontAwesomeIcon icon={faPlus} className="ml-2" />
         </button>
+        <Link href="/transactions/massiveCreation" className="btn-secondary">
+          Cargar desde excel
+        </Link>
       </div>
       <CreateTransaction
         isSheetOpen={isCardOpen}

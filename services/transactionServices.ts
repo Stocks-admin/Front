@@ -15,3 +15,7 @@ export const createTransaction = (body: createTransactionBody) => {
 export const createFakeTransactions = () => {
   return axiosInstance.post("fake-transactions");
 };
+
+export const createMassiveTransactions = (body: FormData) => {
+  return axiosInstance.post("transactions/massiveCreateTransaction", body);
+};
