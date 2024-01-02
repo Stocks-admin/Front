@@ -25,11 +25,11 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const body = {
-          email: credentials.username,
-          password: credentials.password,
-        };
         try {
+          const body = {
+            email: credentials.username,
+            password: credentials.password,
+          };
           const resp = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
             body
@@ -39,7 +39,9 @@ export default NextAuth({
           if (resp.status === 200 && user) {
             return user.user;
           }
-          return null;
+          throw new Error(
+            "Ocurrio un error inesperado, vuelva a intentar en unos minutos"
+          );
         } catch (error) {
           throw new Error(
             error?.response?.data?.message ||
