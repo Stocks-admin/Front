@@ -27,6 +27,10 @@ const config: Config = {
       fontFamily: {
         circular: ["var(--font-circular)"],
       },
+      colors: {
+        bull_green: "#00c28f",
+        bear_red: "#eb0a3a",
+      },
     },
   },
   plugins: [require("flowbite/plugin")],

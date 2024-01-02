@@ -27,44 +27,52 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
       </thead>
       <tbody>
         {assets?.length > 0 &&
-          assets.map((asset) => (
-            <tr
-              key={"asset-" + asset.symbol}
-              className="text-center shadow rounded-full py-2"
-            >
-              <td className="py-2 flex">
-                <Image
-                  src={asset?.organization?.logo || noImage.src}
-                  alt="logo"
-                  width={30}
-                  height={30}
-                  className="rounded-full"
-                />
-                <span className="pl-2">{asset.symbol}</span>
-              </td>
-              <td className="py-2">{asset.market}</td>
-              <td className="py-2">Accion</td>
-              <td className="py-2">{asset.final_amount}</td>
-              <td className="py-2">
-                {getMoneyText(asset.purchase_price, currency)}
-              </td>
-              <td className="py-2">
-                {getMoneyText(asset.current_price, currency)}
-              </td>
-              <td className="py-2">
-                {variationType === "nominal" &&
-                  (currency === 0 ? "U$S " : "AR$ ")}
-                {
-                  calculateVariation(
-                    asset.purchase_price,
-                    asset.current_price,
-                    currency
-                  )[variationType]
-                }
-                {variationType === "percentage" && "%"}
-              </td>
-            </tr>
-          ))}
+          assets.map((asset) => {
+            const variation = calculateVariation(
+              asset.purchase_price,
+              asset.current_price,
+              currency
+            );
+            return (
+              <tr
+                key={"asset-" + asset.symbol}
+                className="text-center shadow rounded-full py-2"
+              >
+                <td className="py-2 flex">
+                  <Image
+                    src={asset?.organization?.logo || noImage.src}
+                    alt="logo"
+                    width={30}
+                    height={30}
+                    className="rounded-full"
+                  />
+                  <span className="pl-2">{asset.symbol}</span>
+                </td>
+                <td className="py-2">{asset.market}</td>
+                <td className="py-2">Accion</td>
+                <td className="py-2">{asset.final_amount}</td>
+                <td className="py-2">
+                  {getMoneyText(asset.purchase_price, currency)}
+                </td>
+                <td className="py-2">
+                  {getMoneyText(asset.current_price, currency)}
+                </td>
+                <td
+                  className={`py-2 font-bold ${
+                    variation.result === "positive"
+                      ? "text-bull_green"
+                      : "text-bear_red"
+                  }`}
+                >
+                  {variationType === "nominal" &&
+                    (currency === 0 ? "U$S " : "AR$ ")}
+                  {variation[variationType]}
+                  {variationType === "percentage" && "%"}
+                  {variation.result === "positive" ? "▲" : "▼"}
+                </td>
+              </tr>
+            );
+          })}
       </tbody>
     </table>
   );

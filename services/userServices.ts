@@ -36,3 +36,11 @@ export const getUserTransactions = async ({
     },
   });
 };
+
+export const getUserBenchmark = async (token: string = "") => {
+  return await axiosInstance.get("user/benchmark", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

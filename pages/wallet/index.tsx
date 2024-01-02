@@ -5,7 +5,7 @@ import { AppState } from "@/redux/store";
 import { getSession } from "next-auth/react";
 import SidebarLayout from "@/components/Layout/SidebarLayout";
 import ToggleSwitch from "@/components/ToggleSwitch";
-import { getUserPortfolio } from "@/services/userServices";
+import { getUserBenchmark, getUserPortfolio } from "@/services/userServices";
 import AssetsTable from "./components/AssetsTable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -20,6 +20,10 @@ import { useToast } from "@/hooks/useToast";
 import { createFakeTransactions } from "@/services/transactionServices";
 import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
 import Link from "next/link";
+import {
+  setBenchmark,
+  setBenchmarkStatus,
+} from "@/redux/slices/benchmarkSlice";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -38,12 +42,23 @@ const Wallet = () => {
   useEffect(() => {
     if (portfolio.status !== "success" && portfolio.status !== "loading") {
       dispatch(setPortfolioStatus("loading"));
-      getUserPortfolio()
+      const fetchInfo = [getUserPortfolio(), getUserBenchmark()];
+
+      Promise.all(fetchInfo)
         .then((res) => {
-          dispatch(setPortfolioStatus("success"));
-          dispatch(setPortfolio(res.data));
+          const portfolio = res[0].data;
+          const benchmark = res[1].data;
+          if (portfolio) {
+            dispatch(setPortfolioStatus("success"));
+            dispatch(setPortfolio(portfolio));
+          }
+          if (benchmark) {
+            dispatch(setBenchmarkStatus("success"));
+            dispatch(setBenchmark(benchmark));
+          }
         })
         .catch((err) => {
+          console.log(err);
           dispatch(setPortfolioStatus("failed"));
           notify("Error al obtener el portfolio", "error");
           logout();

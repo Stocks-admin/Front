@@ -1,5 +1,7 @@
 import SidebarLayout from "@/components/Layout/SidebarLayout";
+import useLogout from "@/hooks/useLogout";
 import { useToast } from "@/hooks/useToast";
+import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
 import { createMassiveTransactions } from "@/services/transactionServices";
 import { faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,6 +32,8 @@ const schema = yup.object().shape({
 const MassiveCreation = () => {
   const [fileName, setFileName] = useState("");
   const [notify] = useToast();
+  const [updatePortfolio] = useUpdatePortfolio();
+  const logout = useLogout();
 
   const {
     register,
@@ -50,13 +54,18 @@ const MassiveCreation = () => {
     createMassiveTransactions(body)
       .then((res) => {
         if (res?.data?.transactions) {
-          notify(
-            `Se han creado ${res?.data?.transactions} transacciones`,
-            "success"
-          );
-
-          setFileName("");
-          setValue("file", []);
+          updatePortfolio()
+            .then(() => {
+              notify(
+                `Se han creado ${res?.data?.transactions} transacciones`,
+                "success"
+              );
+              setFileName("");
+              setValue("file", []);
+            })
+            .catch((err) => {
+              logout();
+            });
         } else {
           if (res?.data?.transactions) {
             notify(`Se han creado las transacciones correctamente`, "success");
