@@ -31,9 +31,10 @@ export default NextAuth({
         };
         try {
           const resp = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
+            `https://api.butterstocks.site/auth/login`,
             body
           );
+          console.log(resp);
           const user = resp?.data;
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
           if (resp.status === 200 && user) {
