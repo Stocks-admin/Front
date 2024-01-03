@@ -30,23 +30,17 @@ export default NextAuth({
             email: credentials.username,
             password: credentials.password,
           };
-          // const resp = await axios.post(
-          //   `https://api.butterstocks.site/auth/login`,
-          //   body
-          // );
+          const resp = await axios.post(
+            `https://api.butterstocks.site/auth/login`,
+            body
+          );
 
-          const resp = await fetch(`https://api.butterstocks.site/auth/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          });
-
+          console.log(resp);
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
-          const { user } = resp?.json();
+          const { user } = resp?.data;
           return user;
         } catch (error) {
+          console.log(error);
           return null;
         }
       },
