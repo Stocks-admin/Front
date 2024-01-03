@@ -54,8 +54,8 @@ export default NextAuth({
 
           console.log(resp);
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
-          const { user } = resp?.data;
-          return user;
+          // const { user } = resp?.data;
+          return resp.data.user;
         } catch (error) {
           console.log(error);
           return null;

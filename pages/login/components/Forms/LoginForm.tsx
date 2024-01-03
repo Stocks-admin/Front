@@ -39,13 +39,13 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
           notify(result.error, "error");
         } else {
           // Si no hay error, redireccionar a la página principal
-          router.push("/wallet");
+          router.push("/transactions");
         }
       })
       .catch((err) => {
         console.log(err);
         notify(err, "error");
-        return notify(
+        notify(
           "Ocurrio un error inesperado, vuelva a intentar en unos minutos",
           "error"
         );
@@ -59,7 +59,7 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
       className="flex flex-col justify-between items-center"
     >
       <div className="form-group">
-        <label htmlFor="email">E-mail</label>
+        <label htmlFor="email">Email</label>
         <input
           type="email"
           className={`form-control ${errors.email ? "is-invalid" : ""}`}
