@@ -27,30 +27,13 @@ export default NextAuth({
       async authorize(credentials) {
         try {
           const body = {
-            email: credentials.username,
-            password: credentials.password,
+            email: credentials?.username,
+            password: credentials?.password,
           };
-          // const resp = await axios.post(
-          //   `https://api.butterstocks.site/auth/login`,
-          //   body
-          // );
-          const resp = {
-            data: {
-              user: {
-                user_id: 1,
-                email: "matiduraan@gmail.com",
-                name: "Matias Duran",
-                phone: "01138054078",
-                created: "2023-12-29T03:44:19.168Z",
-                updated: "2023-12-29T03:44:19.168Z",
-                accessToken:
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTcwNDIzODQ4MCwiZXhwIjoxNzA0MzI0ODgwfQ.7ctzYSVrs3JbubkTZRrDb90VajjhKmvQoqLIAQVxBSA",
-                refreshToken:
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJqdGkiOiJjZGM5YjE0YS0yNTUwLTQ4MmUtOWU0NS02YTI4OTkxYTA3Y2UiLCJpYXQiOjE3MDQyMzg0ODAsImV4cCI6MTcwNjgzMDQ4MH0.fJD6JPyT0Mrwm8-bvPUtbDj1ayQU87ZRprDjMwZz3tc",
-              },
-            },
-            status: 200,
-          };
+          const resp = await axios.post(
+            `https://api.butterstocks.site/auth/login`,
+            body
+          );
 
           console.log(resp);
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
