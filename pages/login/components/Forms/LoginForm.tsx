@@ -32,6 +32,7 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
       redirect: false, // No redireccionar automáticamente
       username: data.email, // Se envía el nombre de usuario ingresado
       password: data.password, // Se envía la contraseña ingresada
+      callbackUrl: "/wallet",
     })
       .then((result) => {
         if (result?.error) {
@@ -44,6 +45,7 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
       })
       .catch((err) => {
         console.log(err);
+        notify(err, "error");
         return notify(
           "Ocurrio un error inesperado, vuelva a intentar en unos minutos",
           "error"
