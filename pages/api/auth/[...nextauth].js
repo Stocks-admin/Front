@@ -9,7 +9,7 @@ export default NextAuth({
     maxAge: 60 * 60 * 24 * 7, // 30 days
     updateAge: 60 * 55, // 55 minutes
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
     signOut: "/login",
