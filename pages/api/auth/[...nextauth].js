@@ -40,15 +40,10 @@ export default NextAuth({
             const { user } = resp?.data;
             return user;
           } else {
-            throw new Error(
-              "Ocurrio un error inesperado, vuelva a intentar en unos minutos"
-            );
+            return null;
           }
         } catch (error) {
-          throw new Error(
-            error?.response?.data?.message ||
-              "Ocurrio un error inesperado, vuelva a intentar en unos minutos"
-          );
+          return null;
         }
       },
     }),
