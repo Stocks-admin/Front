@@ -3,11 +3,13 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import portfolioReducer from "./slices/portfolioSlice";
 import dollarReducer from "./slices/dollarSlice";
+import benchmarkReducer from "./slices/benchmarkSlice";
 
 const rootReduce = combineReducers({
   // Aquí añades tus reducers normales
   portfolio: portfolioReducer,
   dollar: dollarReducer,
+  benchmark: benchmarkReducer,
 });
 
 const persistConfig = {

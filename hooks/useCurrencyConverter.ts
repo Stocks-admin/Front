@@ -48,12 +48,12 @@ function useCurrencyConverter() {
     setDollarValueState(dollarValueSelector?.dollarValue || 0);
   }, [dollarValueSelector]);
 
-  const convertToUsd = (vallueToConvert: number) => {
-    return vallueToConvert / dollarValueState;
+  const convertToUsd = (valueToConvert: number) => {
+    return valueToConvert / dollarValueState;
   };
 
-  const convertToArs = (vallueToConvert: number) => {
-    return vallueToConvert * dollarValueState;
+  const convertToArs = (valueToConvert: number) => {
+    return valueToConvert * dollarValueState;
   };
 
   return { convertToArs, convertToUsd };

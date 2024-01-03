@@ -11,6 +11,7 @@ const useMoneyTextGenerator = () => {
 
       const nominalVariation = currentValue - previousValue;
       return {
+        result: nominalVariation >= 0 ? "positive" : "negative",
         percentage: PercentageVariation.toFixed(2),
         nominal:
           currency == 0

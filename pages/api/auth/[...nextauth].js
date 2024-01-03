@@ -25,26 +25,23 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const body = {
-          email: credentials.username,
-          password: credentials.password,
-        };
         try {
+          const body = {
+            email: credentials.username,
+            password: credentials.password,
+          };
           const resp = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
+            `https://api.butterstocks.site/auth/login`,
             body
           );
-          const user = resp?.data;
+
+          console.log(resp);
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
-          if (resp.status === 200 && user) {
-            return user.user;
-          }
-          return null;
+          const { user } = resp?.data;
+          return user;
         } catch (error) {
-          throw new Error(
-            error?.response?.data?.message ||
-              "Ocurrio un error inesperado, vuelva a intentar en unos minutos"
-          );
+          console.log(error);
+          return null;
         }
       },
     }),

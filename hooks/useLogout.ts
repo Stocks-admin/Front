@@ -16,14 +16,14 @@ export default function useLogout() {
       if (resp.status !== 200) {
         dispatch(cleanPortfolio());
         dispatch(cleanDollarValue());
-        await signOut();
+        await signOut({ callbackUrl: "/login" });
         setTimeout(() => {
           window.location.href = "/login";
         }, 1000);
       } else {
         dispatch(cleanPortfolio());
         dispatch(cleanDollarValue());
-        await signOut();
+        await signOut({ callbackUrl: "/login" });
         if (!redirect) return;
         setTimeout(() => {
           window.location.href = "/login";
