@@ -6,6 +6,7 @@ import login_text from "@/public/static/images/login-text.png";
 const Login = () => {
   console.log("SECRET", process.env.NEXTAUTH_SECRET);
   console.log("URL", process.env.NEXTAUTH_URL);
+  console.log("API", process.env.NEXT_PUBLIC_API_URL);
 
   return (
     <FullWidthLayout>

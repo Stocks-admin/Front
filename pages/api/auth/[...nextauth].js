@@ -31,7 +31,7 @@ export default NextAuth({
             password: credentials?.password,
           };
           const resp = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}auth/login`,
+            `https://api.butterstocks.site/auth/login`,
             body
           );
           const user = resp?.data;
