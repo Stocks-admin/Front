@@ -9,7 +9,7 @@ export default NextAuth({
     maxAge: 60 * 60 * 24 * 7, // 30 days
     updateAge: 60 * 55, // 55 minutes
   },
-  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
     signOut: "/login",
@@ -44,12 +44,8 @@ export default NextAuth({
           });
 
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
-          if (resp?.status === 200) {
-            const { user } = resp?.data;
-            return user;
-          } else {
-            return null;
-          }
+          const { user } = resp?.json();
+          return user;
         } catch (error) {
           return null;
         }
