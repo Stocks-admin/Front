@@ -27,18 +27,20 @@ export default NextAuth({
       async authorize(credentials) {
         try {
           const body = {
-            email: credentials.username,
-            password: credentials.password,
+            email: credentials?.username,
+            password: credentials?.password,
           };
           const resp = await axios.post(
             `https://api.butterstocks.site/auth/login`,
             body
           );
 
-          console.log(resp);
+          const user = resp?.data;
           // Si el backend retorna un objeto usuario, la autenticación fue exitosa
-          const { user } = resp?.data;
-          return user;
+          if (resp?.status === 200 && user) {
+            return user.user;
+          }
+          return null;
         } catch (error) {
           console.log(error);
           return null;
@@ -66,6 +68,7 @@ export default NextAuth({
           token.refreshToken = newToken.data.refreshToken;
         }
       }
+
       return token;
     },
     async session({ session, token }) {
@@ -74,6 +77,7 @@ export default NextAuth({
         session.user.user_id = token.user_id;
         session.user.accessToken = token.accessToken;
       }
+
       return session;
     },
   },

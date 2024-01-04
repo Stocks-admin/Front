@@ -43,7 +43,6 @@ const RegisterForm = ({
           redirect: false, // No redireccionar automáticamente
           username: data.email, // Se envía el nombre de usuario ingresado
           password: data.password, // Se envía la contraseña ingresada
-          callbackUrl: "/wallet",
         }).then((result) => {
           if (result?.error) {
             // Si hay un error, mostrarlo en pantalla

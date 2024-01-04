@@ -60,9 +60,8 @@ const Transactions = (props: IProps) => {
 };
 
 export const getServerSideProps = async ({
-  req,
-  res,
   query,
+  req,
 }: GetServerSidePropsContext) => {
   const session = await getSession({ req });
   if (!session) {
@@ -78,33 +77,41 @@ export const getServerSideProps = async ({
   if (page && typeof page === "string") {
     offset = parseInt(page) * 10 - 10;
   }
-  const resp = await getUserTransactions({
-    token: session.user.accessToken,
-    // page: page && typeof page === "string" ? parseInt(page) : 1,
-    limit: 10,
-    offset,
-  });
-  if (resp.status === 401) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  } else if (resp.status === 200) {
+  try {
+    const resp = await getUserTransactions({
+      token: session.user.accessToken,
+      limit: 10,
+      offset,
+    });
+    if (resp.status === 401) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    } else if (resp.status === 200) {
+      return {
+        props: {
+          transactions: resp.data.transactions,
+          total: resp.data.total,
+        },
+      };
+    }
     return {
       props: {
-        transactions: resp.data.transactions,
-        total: resp.data.total,
+        transactions: [],
+        total: 0,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        transactions: [],
+        total: 0,
       },
     };
   }
-  return {
-    props: {
-      transactions: [],
-      total: 0,
-    },
-  };
 };
 
 export default Transactions;
