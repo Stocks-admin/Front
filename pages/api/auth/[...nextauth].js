@@ -48,6 +48,12 @@ export default NextAuth({
     }),
   ],
   callbacks: {
+    async signIn(user, account, profile) {
+      return Promise.resolve(true);
+    },
+    async redirect(url, baseUrl) {
+      return Promise.resolve(baseUrl);
+    },
     async jwt({ token, user }) {
       if (user && !token?.user_id) {
         token.user_id = user.user_id;
