@@ -28,28 +28,22 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
 
   const onSubmit = async (data: FieldValues) => {
     dispatch(cleanPortfolio());
-    signIn("credentials", {
-      redirect: false, // No redireccionar automáticamente
-      username: data.email, // Se envía el nombre de usuario ingresado
-      password: data.password, // Se envía la contraseña ingresada
-    })
-      .then((result) => {
-        if (result?.error) {
-          // Si hay un error, mostrarlo en pantalla
-          notify(result.error, "error");
-        } else {
-          // Si no hay error, redireccionar a la página principal
-          router.push("/transactions");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        notify(err, "error");
-        notify(
-          "Ocurrio un error inesperado, vuelva a intentar en unos minutos",
-          "error"
-        );
+    try {
+      const resp = await signIn("credentials", {
+        redirect: false, // No redireccionar automáticamente
+        username: data.email, // Se envía el nombre de usuario ingresado
+        password: data.password, // Se envía la contraseña ingresada
       });
+      if (resp?.error) {
+        console.log("ERROR", resp?.error);
+        notify(resp?.error, "error");
+      } else {
+        router.push("/transactions");
+      }
+    } catch (error) {
+      console.log("ERROR", error);
+      notify("Ocurrio un error inesperado", "error");
+    }
   };
 
   return (
