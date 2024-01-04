@@ -31,7 +31,7 @@ export default NextAuth({
             password: credentials?.password,
           };
           const resp = await axios.post(
-            `https://posttest.free.beeceptor.com/userLogin`,
+            `https://api.butterstocks.site/auth/login`,
             body
           );
 
