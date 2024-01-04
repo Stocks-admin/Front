@@ -12,9 +12,9 @@ axiosInstance.interceptors.request.use(
     const isServerSide = typeof window === "undefined";
     if (isServerSide) return config;
     const session = await getSession();
-    if (session?.user.accessToken) {
+    if (session?.user?.accessToken) {
       // Asumiendo que el token de acceso se almacena directamente en el objeto de sesión
-      config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      config.headers["Authorization"] = `Bearer ${session?.user?.accessToken}`;
     }
 
     return config;
