@@ -25,6 +25,7 @@ const schema = yup.object().shape({
   symbol: yup.string().required(),
   market: yup.string().required(),
   amount: yup.number().min(1).required().label("Cantidad de acciones"),
+  currency: yup.string().oneOf(["ARS", "USD"]).required().label("Moneda"),
   price: yup.number().min(0).required().label("Precio"),
   date: yup.date().required().label("Fecha de transaccion"),
 });
@@ -61,6 +62,7 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
       transaction_type: data.type,
       market: data.market,
       amount_sold: data.amount,
+      currency: data.currency,
       symbol_price: data.price,
       transaction_date: data.date,
     };
@@ -129,12 +131,12 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="market">Mercado</label>
             <select
               className={`form-control ${errors.market?.message && "error"}`}
               id="market"
               {...register("market")}
               defaultValue="nasdaq"
+              hidden
             >
               <option value="nasdaq">NASDAQ</option>
               <option value="nyse">NYSE</option>
@@ -154,6 +156,19 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
               {...register("amount")}
             />
             <p className="text-danger">{errors.amount?.message}</p>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="currency">Moneda</label>
+            <select
+              className={`form-control ${errors.currency?.message && "error"}`}
+              id="currency"
+              {...register("currency")}
+              defaultValue="USD"
+            >
+              <option value="USD">USD</option>
+              <option value="ARS">ARS</option>
+            </select>
           </div>
 
           <div className="form-group">

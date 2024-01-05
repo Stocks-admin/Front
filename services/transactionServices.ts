@@ -5,6 +5,7 @@ interface createTransactionBody {
   amount_sold: number;
   transaction_type: "buy" | "sell";
   transaction_date: string;
+  currency: "ARS" | "USD";
   symbol_price: number;
 }
 
