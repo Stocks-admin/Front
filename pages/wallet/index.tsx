@@ -35,6 +35,10 @@ const Wallet = () => {
     (state: AppState) => state.portfolio,
     shallowEqual
   );
+  const benchmark = useSelector(
+    (state: AppState) => state.benchmark,
+    shallowEqual
+  );
   const logout = useLogout();
   const [notify] = useToast();
   const [updatePortfolio] = useUpdatePortfolio();
@@ -122,7 +126,7 @@ const Wallet = () => {
           onChange={onChangeCurrency}
         />
       </div>
-      <div className="flex justify-between py-3 border-y-2 border-slate-200">
+      <div className="flex justify-between py-3 border-t-2 border-slate-200">
         <h2 className="font-circular">
           Portfolio {getMoneyText(portfolioValue, currencySelected)}
         </h2>
@@ -140,6 +144,27 @@ const Wallet = () => {
           {variationSelected === 1 && "%"}
         </h2>
       </div>
+
+      <div className="py-3 border-b-2 border-slate-200">
+        <h2 className="font-circular text-center">Benchmark</h2>
+        <div className="flex justify-evenly">
+          <h2
+            className={`font-circular ${
+              benchmark.benchmark.uva < 0 ? "text-bear_red" : "text-bull_green"
+            }`}
+          >
+            Dolar: {benchmark.benchmark.dollar.toLocaleString()}%
+          </h2>
+          <h2
+            className={`font-circular ${
+              benchmark.benchmark.uva < 0 ? "text-bear_red" : "text-bull_green"
+            }`}
+          >
+            Uva: {benchmark.benchmark.uva.toLocaleString()}%
+          </h2>
+        </div>
+      </div>
+
       <div className="mt-3">
         <AssetsTable
           assets={portfolio.stocks}
