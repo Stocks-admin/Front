@@ -25,7 +25,7 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        circular: ["var(--font-circular)"],
+        circular: ["Plus Jakarta Sans", "sans-serif"],
       },
       colors: {
         bull_green: "#00c28f",

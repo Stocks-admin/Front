@@ -4,7 +4,7 @@ import { getUserTransactions } from "@/services/userServices";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { NumberParam, useQueryParam } from "use-query-params";
+import { NumberParam, StringParam, useQueryParam } from "use-query-params";
 import TransactionList from "./components/transactionList";
 import ToggleSwitch from "@/components/ToggleSwitch";
 
@@ -18,7 +18,9 @@ const Transactions = (props: IProps) => {
   const [transactions, setTransactions] = useState(transactionsParams);
   const [fetchedPage, setFetchedPage] = useState(1);
   const [page, setPage] = useQueryParam("page", NumberParam);
+  const [symbol, setSymbol] = useQueryParam("symbol", StringParam);
   const [currencySelected, setCurrencySelected] = useState<0 | 1>(0);
+  const [pageUpdated, setPageUpdated] = useState(false);
 
   useEffect(() => {
     if (!page) {
@@ -27,13 +29,15 @@ const Transactions = (props: IProps) => {
     if (page && page !== fetchedPage) {
       setFetchedPage(page);
       getUserTransactions({
+        symbol: symbol || undefined,
         limit: 10,
         offset: (page || 1) * 10 - 10,
       }).then((res) => {
         setTransactions(res.data.transactions);
       });
     }
-  }, [page]);
+    setPageUpdated(true);
+  }, [page, symbol]);
 
   const onChangeCurrency = (option: 0 | 1) => {
     setCurrencySelected(option);
@@ -72,13 +76,14 @@ export const getServerSideProps = async ({
       },
     };
   }
-  const { page } = query;
+  const { page, symbol } = query;
   let offset = 0;
   if (page && typeof page === "string") {
     offset = parseInt(page) * 10 - 10;
   }
   try {
     const resp = await getUserTransactions({
+      symbol: `${symbol}` || undefined,
       token: session.user.accessToken,
       limit: 10,
       offset,

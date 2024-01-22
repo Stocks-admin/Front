@@ -38,7 +38,7 @@ const SymbolInput = ({ setValue }: IProps) => {
 
   const onSelectOption = (symbol: string, market: string) => {
     setValue("symbol", symbol);
-    setValue("market", market.toLowerCase());
+    setValue("market", market?.toLowerCase());
     setInputValue(symbol);
     setIsSearchOpen(false);
   };

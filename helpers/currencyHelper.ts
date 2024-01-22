@@ -10,8 +10,14 @@ export const getMoneyText = ({
   converter,
 }: getMoneyTextProps) => {
   if (destinationCurrency === "ARS") {
-    return `${converter(valueToConvert).toLocaleString()} AR$`;
+    return `${converter(valueToConvert).toLocaleString("es-ES", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} AR$`;
   } else {
-    return `U$S ${valueToConvert.toLocaleString()}`;
+    return `U$S ${valueToConvert.toLocaleString("es-ES", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 };
