@@ -28,6 +28,10 @@
     @apply rounded-full bg-gradient text-white px-3 py-2;
   }
 
+  .btn-primary:disabled {
+    @apply opacity-50;
+  }
+
   .btn-secondary {
     @apply rounded-full border-transparent border-2 px-3 py-2;
 
