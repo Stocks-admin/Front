@@ -62,7 +62,9 @@ const MassiveCreation = () => {
             .then(() => {
               setIsLoading(false);
               notify(
-                `Se han creado ${res?.data?.transactions?.length} transacciones`,
+                `Se han creado ${
+                  res?.data?.transactions?.count || "las"
+                } transacciones`,
                 "success"
               );
               setFileName("");
@@ -158,7 +160,7 @@ const MassiveCreation = () => {
           <button
             type="submit"
             form="dropzone-form"
-            className="btn-primary disabled:bg-slate-400"
+            className="btn-primary"
             disabled={isLoading}
           >
             {isLoading ? "Subiendo..." : "Guardar"}
