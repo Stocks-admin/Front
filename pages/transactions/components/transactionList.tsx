@@ -1,7 +1,12 @@
 import useMoneyTextGenerator from "@/hooks/useMoneyTextGenerator";
+import { useToast } from "@/hooks/useToast";
 import { Transaction } from "@/models/transactionModel";
+import { deleteTransaction } from "@/services/transactionServices";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface IProps {
   transactions: Transaction[];
@@ -11,12 +16,34 @@ interface IProps {
 }
 
 const TransactionList = ({
-  transactions,
+  transactions: transactionsParam,
   page,
   totalTransactions,
   currencySelected,
 }: IProps) => {
   const { getMoneyText } = useMoneyTextGenerator();
+  const [notify] = useToast();
+  const [transactions, setTransactions] = useState(transactionsParam);
+
+  useEffect(() => {
+    setTransactions(transactionsParam);
+  }, [transactionsParam]);
+
+  const handleDelete = (transactionId: number) => {
+    deleteTransaction(transactionId)
+      .then((res) => {
+        if (res.status !== 200)
+          return notify("No se pudo eliminar la transaccion", "error");
+        const filteredTransactions = transactions.filter(
+          (transaction) => transaction.transaction_id !== transactionId
+        );
+        setTransactions(filteredTransactions);
+        return notify("Transaccion eliminada correctamente", "success");
+      })
+      .catch((err) => {
+        return notify("No se pudo eliminar la transaccion", "error");
+      });
+  };
 
   return (
     <>
@@ -28,6 +55,7 @@ const TransactionList = ({
             <th>Acción</th>
             <th>Cantidad</th>
             <th>Precio</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -42,6 +70,14 @@ const TransactionList = ({
               <td>
                 {getMoneyText(transaction.symbol_price, currencySelected)}
               </td>
+              <td>
+                <button
+                  className="transaction-list-table__delete-button"
+                  onClick={() => handleDelete(transaction.transaction_id)}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -50,7 +86,8 @@ const TransactionList = ({
         <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
           Showing{" "}
           <span className="font-semibold text-gray-900 dark:text-white">
-            {(page || 1) * 10 - 9} - {(page || 1) * 10}
+            {(page || 1) * 10 - 9} -{" "}
+            {totalTransactions >= 10 ? (page || 1) * 10 : totalTransactions}
           </span>{" "}
           of{" "}
           <span className="font-semibold text-gray-900 dark:text-white">

@@ -12,11 +12,20 @@ const useMoneyTextGenerator = () => {
       const nominalVariation = currentValue - previousValue;
       return {
         result: nominalVariation >= 0 ? "positive" : "negative",
-        percentage: PercentageVariation.toFixed(2),
+        percentage: PercentageVariation.toLocaleString("es-AR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }),
         nominal:
           currency == 0
-            ? nominalVariation.toLocaleString()
-            : convertToArs(nominalVariation).toLocaleString(),
+            ? nominalVariation.toLocaleString("es-AR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })
+            : convertToArs(nominalVariation).toLocaleString("es-AR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }),
       };
     },
     []
@@ -25,9 +34,15 @@ const useMoneyTextGenerator = () => {
   const getMoneyText = useCallback(
     (valueToConvert: number, destinationCurrency: 0 | 1) => {
       if (destinationCurrency === 1) {
-        return `${convertToArs(valueToConvert).toLocaleString()} AR$`;
+        return `${convertToArs(valueToConvert).toLocaleString("es-AR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
       } else {
-        return `U$S ${valueToConvert.toLocaleString()}`;
+        return `${valueToConvert.toLocaleString("es-AR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
       }
     },
     []

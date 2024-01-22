@@ -20,3 +20,7 @@ export const createFakeTransactions = () => {
 export const createMassiveTransactions = (body: FormData) => {
   return axiosInstance.post("transactions/massiveCreateTransaction", body);
 };
+
+export const deleteTransaction = (id: number) => {
+  return axiosInstance.delete(`transactions/deleteTransaction/${id}`);
+};

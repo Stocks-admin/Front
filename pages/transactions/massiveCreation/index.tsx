@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -31,9 +32,11 @@ const schema = yup.object().shape({
 
 const MassiveCreation = () => {
   const [fileName, setFileName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [notify] = useToast();
   const [updatePortfolio] = useUpdatePortfolio();
   const logout = useLogout();
+  const router = useRouter();
 
   const {
     register,
@@ -49,6 +52,7 @@ const MassiveCreation = () => {
   });
 
   const onSubmit = (data: FieldValues) => {
+    setIsLoading(true);
     const body = new FormData();
     body.append("file", data.file[0]);
     createMassiveTransactions(body)
@@ -56,26 +60,30 @@ const MassiveCreation = () => {
         if (res?.data?.transactions) {
           updatePortfolio()
             .then(() => {
+              setIsLoading(false);
               notify(
-                `Se han creado ${res?.data?.transactions} transacciones`,
+                `Se han creado ${res?.data?.transactions?.length} transacciones`,
                 "success"
               );
               setFileName("");
               setValue("file", []);
+              router.push("/transactions");
             })
             .catch((err) => {
+              setIsLoading(false);
               logout();
             });
         } else {
           if (res?.data?.transactions) {
+            setIsLoading(false);
             notify(`Se han creado las transacciones correctamente`, "success");
-
             setFileName("");
             setValue("file", []);
           }
         }
       })
       .catch((err) => {
+        setIsLoading(false);
         if (err?.response?.data?.error) {
           return notify(err?.response?.data?.error, "error");
         } else {
@@ -134,7 +142,7 @@ const MassiveCreation = () => {
                 </p>
                 <p className="text-xs text-gray-500">XLX, CSV or XLSX</p>
                 {fileName !== "" && (
-                  <p className="text-xs text-gray-500">{fileName}</p>
+                  <p className="text-sm text-green-700 font-bold">{fileName}</p>
                 )}
               </div>
               <input
@@ -147,8 +155,13 @@ const MassiveCreation = () => {
           </form>
         </div>
         <div className="flex mt-5 self-start gap-5 items-center">
-          <button type="submit" form="dropzone-form" className="btn-primary">
-            Guardar
+          <button
+            type="submit"
+            form="dropzone-form"
+            className="btn-primary disabled:bg-slate-400"
+            disabled={isLoading}
+          >
+            {isLoading ? "Subiendo..." : "Guardar"}
           </button>
           <Link
             href="https://butter-bucket-gp.s3.amazonaws.com/Butter+massive+creation.xlsx"

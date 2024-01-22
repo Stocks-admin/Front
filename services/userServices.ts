@@ -17,17 +17,20 @@ export const getUserWallet = async (token: string = "") => {
 };
 
 interface ITransaction {
+  symbol?: string;
   offset?: number;
   limit?: number;
   token?: string;
 }
 export const getUserTransactions = async ({
+  symbol,
   offset,
   limit,
   token,
 }: ITransaction) => {
   return await axiosInstance.get("transactions/userTransactions", {
     params: {
+      symbol,
       offset,
       limit,
     },

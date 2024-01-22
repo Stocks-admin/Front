@@ -24,6 +24,7 @@ import {
   setBenchmark,
   setBenchmarkStatus,
 } from "@/redux/slices/benchmarkSlice";
+import SideDrawer from "@/components/Drawer";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -88,6 +89,14 @@ const Wallet = () => {
     return 0;
   }, [portfolio]);
 
+  const balance = useMemo(() => {
+    return calculateVariation(
+      portfolioPurchaseValue,
+      portfolioValue,
+      currencySelected
+    );
+  }, [portfolio, currencySelected]);
+
   const onChangeVariation = (option: 0 | 1) => {
     setVariationSelected(option);
   };
@@ -127,21 +136,27 @@ const Wallet = () => {
         />
       </div>
       <div className="flex justify-between py-3 border-t-2 border-slate-200">
-        <h2 className="font-circular">
-          Portfolio {getMoneyText(portfolioValue, currencySelected)}
-        </h2>
-        <h2 className="font-circular">
-          Balance{" "}
+        <h2 className="font-circular text-4xl font-bold tracking-tighter">
+          Portfolio:{" "}
           {variationSelected === 0 &&
             (currencySelected === 0 ? "U$S " : "AR$ ")}
-          {
-            calculateVariation(
-              portfolioPurchaseValue,
-              portfolioValue,
-              currencySelected
-            )[variationSelected === 0 ? "nominal" : "percentage"]
-          }
-          {variationSelected === 1 && "%"}
+          {getMoneyText(portfolioValue, currencySelected)}
+        </h2>
+        <h2 className="font-circular text-4xl font-bold">
+          Balance:{" "}
+          <span
+            className={`font-bold ${
+              balance.result === "positive"
+                ? "text-bull_green"
+                : "text-bear_red"
+            }`}
+          >
+            {variationSelected === 0 &&
+              (currencySelected === 0 ? "U$S " : "AR$ ")}
+            {balance.result === "positive" && "+"}
+            {balance[variationSelected === 0 ? "nominal" : "percentage"]}
+            {variationSelected === 1 && "%"}
+          </span>
         </h2>
       </div>
 

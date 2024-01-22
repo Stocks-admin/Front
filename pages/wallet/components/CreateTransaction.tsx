@@ -15,6 +15,7 @@ import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { getSymbolPrice } from "@/services/stockServices";
+import SideDrawer from "@/components/Drawer";
 
 const schema = yup.object().shape({
   type: yup
@@ -101,7 +102,11 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
   };
 
   return (
-    <BottomCard isDrawerOpen={isSheetOpen} setIsDrawerOpen={setIsSheetOpen}>
+    <SideDrawer
+      isDrawerOpen={isSheetOpen}
+      setIsDrawerOpen={setIsSheetOpen}
+      title="Crear transaccion"
+    >
       <div className="container">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
@@ -209,7 +214,7 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
           </button>
         </form>
       </div>
-    </BottomCard>
+    </SideDrawer>
   );
 };
 

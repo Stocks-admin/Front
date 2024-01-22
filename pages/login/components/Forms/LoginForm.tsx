@@ -34,11 +34,12 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
         username: data.email, // Se envía el nombre de usuario ingresado
         password: data.password, // Se envía la contraseña ingresada
       });
+      console.log("RESPONSE", resp);
       if (resp?.error) {
         console.log("ERROR", resp?.error);
         notify(resp?.error, "error");
       } else {
-        router.push("/transactions");
+        router.push("/wallet");
       }
     } catch (error) {
       console.log("ERROR", error);
