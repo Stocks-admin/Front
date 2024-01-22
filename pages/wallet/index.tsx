@@ -119,9 +119,11 @@ const Wallet = () => {
   return (
     <SidebarLayout>
       <div className="flex justify-end my-3">
-        <button onClick={createTransactions} className="btn-secondary">
-          Crear transacciones falsas
-        </button>
+        {process.env.NEXT_PUBLIC_SCOPE === "development" && (
+          <button onClick={createTransactions} className="btn-secondary">
+            Crear transacciones falsas
+          </button>
+        )}
         <ToggleSwitch
           option1="$"
           option2="%"
