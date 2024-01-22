@@ -16,8 +16,10 @@ const schema = yup.object().shape({
 
 const RegisterForm = ({
   formRef,
+  setIsLoading,
 }: {
   formRef?: RefObject<HTMLFormElement>;
+  setIsLoading?: (value: boolean) => void;
 }) => {
   const [notify] = useToast();
   const router = useRouter();
@@ -31,6 +33,7 @@ const RegisterForm = ({
   });
 
   const onSubmit = (data: FieldValues) => {
+    setIsLoading && setIsLoading(true);
     const body = {
       email: data.email,
       name: data.name,
@@ -45,6 +48,7 @@ const RegisterForm = ({
           password: data.password, // Se envía la contraseña ingresada
         }).then((result) => {
           if (result?.error) {
+            setIsLoading && setIsLoading(false);
             // Si hay un error, mostrarlo en pantalla
             notify(result.error, "error");
           } else {
@@ -53,6 +57,7 @@ const RegisterForm = ({
           }
         });
       } else {
+        setIsLoading && setIsLoading(false);
         notify("Ocurrio un error inesperado. Intentelo de nuevo", "error");
       }
     });
@@ -97,6 +102,10 @@ const RegisterForm = ({
           className={`form-control ${errors?.password ? "is-invalid" : ""}`}
         />
       </div>
+      <button
+        type="submit"
+        className="h-0 w-0 opacity-0 pointer-events-none absolute"
+      />
     </form>
   );
 };

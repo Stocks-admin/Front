@@ -24,3 +24,7 @@ export const createMassiveTransactions = (body: FormData) => {
 export const deleteTransaction = (id: number) => {
   return axiosInstance.delete(`transactions/deleteTransaction/${id}`);
 };
+
+export const cleanUserTransactions = () => {
+  return axiosInstance.delete("transactions/deleteAllTransactions");
+};

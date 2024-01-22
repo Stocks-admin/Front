@@ -17,14 +17,17 @@ import useLogout from "@/hooks/useLogout";
 import useMoneyTextGenerator from "@/hooks/useMoneyTextGenerator";
 import CreateTransaction from "./components/CreateTransaction";
 import { useToast } from "@/hooks/useToast";
-import { createFakeTransactions } from "@/services/transactionServices";
+import {
+  cleanUserTransactions,
+  createFakeTransactions,
+} from "@/services/transactionServices";
 import { useUpdatePortfolio } from "@/hooks/useUpdatePortfolio";
 import Link from "next/link";
 import {
   setBenchmark,
   setBenchmarkStatus,
 } from "@/redux/slices/benchmarkSlice";
-import SideDrawer from "@/components/Drawer";
+import TableSkeleton from "@/components/skeletons/TableSkeleton";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -116,6 +119,17 @@ const Wallet = () => {
       });
   };
 
+  const cleanTransactions = () => {
+    cleanUserTransactions()
+      .then((res) => {
+        notify("Transacciones borradas correctamente", "success");
+        updatePortfolio();
+      })
+      .catch((err) => {
+        notify("Error al borrar transacciones", "error");
+      });
+  };
+
   return (
     <SidebarLayout>
       <div className="flex justify-end my-3">
@@ -124,6 +138,9 @@ const Wallet = () => {
             Crear transacciones falsas
           </button>
         )}
+        <button onClick={cleanTransactions} className="btn-secondary">
+          Limpiar transacciones
+        </button>
         <ToggleSwitch
           option1="$"
           option2="%"
@@ -183,11 +200,15 @@ const Wallet = () => {
       </div>
 
       <div className="mt-3">
-        <AssetsTable
-          assets={portfolio.stocks}
-          currency={currencySelected}
-          variationType={variationSelected === 0 ? "nominal" : "percentage"}
-        />
+        {portfolio.status === "loading" ? (
+          <TableSkeleton />
+        ) : (
+          <AssetsTable
+            assets={portfolio.stocks}
+            currency={currencySelected}
+            variationType={variationSelected === 0 ? "nominal" : "percentage"}
+          />
+        )}
       </div>
       <div className="mt-3 flex gap-5 items-center">
         <button
