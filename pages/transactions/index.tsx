@@ -17,27 +17,8 @@ const Transactions = (props: IProps) => {
   const { transactions: transactionsParams, total: totalTransactions } = props;
   const [transactions, setTransactions] = useState(transactionsParams);
   const [fetchedPage, setFetchedPage] = useState(1);
-  const [page, setPage] = useQueryParam("page", NumberParam);
-  const [symbol, setSymbol] = useQueryParam("symbol", StringParam);
   const [currencySelected, setCurrencySelected] = useState<0 | 1>(0);
   const [pageUpdated, setPageUpdated] = useState(false);
-
-  useEffect(() => {
-    if (!page) {
-      return setPage(1);
-    }
-    if (page && page !== fetchedPage) {
-      setFetchedPage(page);
-      getUserTransactions({
-        symbol: symbol || undefined,
-        limit: 10,
-        offset: (page || 1) * 10 - 10,
-      }).then((res) => {
-        setTransactions(res.data.transactions);
-      });
-    }
-    setPageUpdated(true);
-  }, [page, symbol]);
 
   const onChangeCurrency = (option: 0 | 1) => {
     setCurrencySelected(option);
@@ -54,8 +35,6 @@ const Transactions = (props: IProps) => {
         />
       </div>
       <TransactionList
-        page={page || 1}
-        totalTransactions={totalTransactions}
         transactions={transactions}
         currencySelected={currencySelected}
       />
@@ -82,12 +61,20 @@ export const getServerSideProps = async ({
     offset = parseInt(page) * 10 - 10;
   }
   try {
-    const resp = await getUserTransactions({
-      symbol: `${symbol}` || undefined,
+    const body: {
+      token: string;
+      limit: number;
+      offset: number;
+      symbol?: string;
+    } = {
       token: session.user.accessToken,
       limit: 10,
       offset,
-    });
+    };
+    if (symbol) {
+      body.symbol = `${symbol}`;
+    }
+    const resp = await getUserTransactions(body);
     if (resp.status === 401) {
       return {
         redirect: {

@@ -14,7 +14,13 @@ const schema = yup.object().shape({
   password: yup.string().required().label("Contraseña"),
 });
 
-const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
+const LoginForm = ({
+  formRef,
+  setIsLoading,
+}: {
+  formRef?: RefObject<HTMLFormElement>;
+  setIsLoading: (value: boolean) => void;
+}) => {
   const {
     register,
     handleSubmit,
@@ -27,6 +33,7 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
   const [notify] = useToast();
 
   const onSubmit = async (data: FieldValues) => {
+    setIsLoading(true);
     dispatch(cleanPortfolio());
     try {
       const resp = await signIn("credentials", {
@@ -37,12 +44,14 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
       console.log("RESPONSE", resp);
       if (resp?.error) {
         console.log("ERROR", resp?.error);
+        setIsLoading(false);
         notify(resp?.error, "error");
       } else {
         router.push("/wallet");
       }
     } catch (error) {
       console.log("ERROR", error);
+      setIsLoading(false);
       notify("Ocurrio un error inesperado", "error");
     }
   };
@@ -73,6 +82,10 @@ const LoginForm = ({ formRef }: { formRef?: RefObject<HTMLFormElement> }) => {
       <Link href={"#"} className="w-full text-center text-sm mb-5">
         Olvidaste tu contraseña?
       </Link>
+      <button
+        type="submit"
+        className="h-0 w-0 opacity-0 pointer-events-none absolute"
+      />
     </form>
   );
 };

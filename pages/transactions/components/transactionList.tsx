@@ -2,32 +2,55 @@ import useMoneyTextGenerator from "@/hooks/useMoneyTextGenerator";
 import { useToast } from "@/hooks/useToast";
 import { Transaction } from "@/models/transactionModel";
 import { deleteTransaction } from "@/services/transactionServices";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { NumberParam, StringParam, useQueryParam } from "use-query-params";
 
 interface IProps {
   transactions: Transaction[];
-  page: number;
-  totalTransactions: number;
   currencySelected: 0 | 1;
 }
 
 const TransactionList = ({
   transactions: transactionsParam,
-  page,
-  totalTransactions,
   currencySelected,
 }: IProps) => {
   const { getMoneyText } = useMoneyTextGenerator();
   const [notify] = useToast();
   const [transactions, setTransactions] = useState(transactionsParam);
+  const [page, setPage] = useQueryParam("page", NumberParam);
+  const [symbol, setSymbol] = useQueryParam("symbol", StringParam);
+  const totalTransactions = useMemo(
+    () =>
+      symbol !== undefined ? transactions.length : transactionsParam.length,
+    [transactionsParam, transactions, symbol]
+  );
 
   useEffect(() => {
     setTransactions(transactionsParam);
   }, [transactionsParam]);
+
+  useEffect(() => {
+    if (!page) {
+      return setPage(1);
+    }
+    let filteredTransactions = transactionsParam;
+    if (symbol) {
+      filteredTransactions = transactionsParam.filter((transaction) =>
+        transaction.symbol.toLowerCase().includes(symbol.toLowerCase())
+      );
+    }
+    if (page) {
+      filteredTransactions = filteredTransactions.slice(
+        (page || 1) * 10 - 10,
+        (page || 1) * 10
+      );
+    }
+    setTransactions(filteredTransactions);
+  }, [page, symbol]);
 
   const handleDelete = (transactionId: number) => {
     deleteTransaction(transactionId)
@@ -45,8 +68,37 @@ const TransactionList = ({
       });
   };
 
+  const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value) {
+      setSymbol(value);
+    } else {
+      setSymbol(undefined);
+    }
+  };
+
   return (
     <>
+      <label htmlFor="table-search" className="sr-only">
+        Search
+      </label>
+      <div className="float-right mb-5 relative">
+        <div className="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+          <FontAwesomeIcon
+            icon={faSearch}
+            className="w-5 h-5 text-gray-400 dark:text-gray-300"
+            aria-hidden="true"
+          />
+        </div>
+        <input
+          type="text"
+          id="table-search"
+          className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
+          placeholder="Buscar..."
+          defaultValue={symbol || ""}
+          onChange={handleChangeSearch}
+        />
+      </div>
       <table className="transaction-list-table">
         <thead>
           <tr>
@@ -100,7 +152,7 @@ const TransactionList = ({
               className={`page-button page-button__prev ${
                 page === 1 && "page-button__disabled"
               }`}
-              href={`?page=${page > 1 ? page - 1 : 1}`}
+              href={`?page=${page && page > 1 ? page - 1 : 1}`}
             >
               Previous
             </Link>
@@ -108,9 +160,13 @@ const TransactionList = ({
           <li>
             <Link
               className={`page-button page-button__next ${
-                page >= totalTransactions / 10 && "page-button__disabled"
+                page &&
+                page >= totalTransactions / 10 &&
+                "page-button__disabled"
               }`}
-              href={`?page=${page < totalTransactions / 10 ? page + 1 : page}`}
+              href={`?page=${
+                page && page < totalTransactions / 10 ? page + 1 : page
+              }`}
             >
               Next
             </Link>

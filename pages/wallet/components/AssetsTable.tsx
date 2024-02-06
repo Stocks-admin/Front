@@ -29,7 +29,7 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
         </tr>
       </thead>
       <tbody>
-        {assets?.length > 0 &&
+        {assets?.length > 0 ? (
           assets.map((asset) => {
             const variation = calculateVariation(
               asset.purchase_price,
@@ -81,7 +81,14 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
                 </td>
               </tr>
             );
-          })}
+          })
+        ) : (
+          <td colSpan={6}>
+            <h2 className="text-center">
+              No hay ningun activo cargado actualmente
+            </h2>
+          </td>
+        )}
       </tbody>
     </table>
   );
