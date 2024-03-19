@@ -43,6 +43,7 @@ const Wallet = () => {
     (state: AppState) => state.benchmark,
     shallowEqual
   );
+
   const logout = useLogout();
   const [notify] = useToast();
   const [updatePortfolio] = useUpdatePortfolio();
@@ -73,6 +74,8 @@ const Wallet = () => {
         });
     }
   }, []);
+
+  console.log("portfolio", portfolio);
 
   const portfolioValue = useMemo(() => {
     if (portfolio.status === "success") {

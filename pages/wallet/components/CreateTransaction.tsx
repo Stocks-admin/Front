@@ -47,6 +47,7 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -70,12 +71,12 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
     try {
       const transaction = await createTransaction(body);
       if (transaction.status === 200) {
-        updatePortfolio();
-        setIsSheetOpen(false);
-        return notify("Transaccion creada correctamente", "success");
+        reset();
+        await updatePortfolio();
+        notify("Transaccion creada correctamente", "success");
+        return setIsSheetOpen(false);
       }
     } catch (error: any) {
-      console.log(error?.response?.data?.error);
       notify(
         error?.response?.data?.error || "Ocurrio un error inesperado",
         "error"
