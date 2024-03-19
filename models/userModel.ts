@@ -1,4 +1,4 @@
-import { Organization } from "./OrganizationModel";
+import { Bond, Organization } from "./OrganizationModel";
 
 export type UserPortfolio = UserStock[];
 
@@ -9,5 +9,7 @@ export type UserStock = {
   final_amount: number;
   purchase_price: number;
   current_price: number;
-  organization: Organization;
+  organization?: Organization;
+  bond_info?: Bond;
+  hasError?: boolean;
 };

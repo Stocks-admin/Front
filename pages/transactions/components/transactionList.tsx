@@ -132,6 +132,13 @@ const TransactionList = ({
               </td>
             </tr>
           ))}
+          {transactions.length === 0 && (
+            <tr>
+              <td colSpan={6} className="text-center">
+                No hay transacciones
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
       <nav className="pagination-control" aria-label="Table navigation">

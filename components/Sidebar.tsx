@@ -8,6 +8,7 @@ import {
   faHome,
   faWallet,
   faArrowRightArrowLeft,
+  faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import logo from "./Layout/assets/Iso logo.png";
 import iso from "./Layout/assets/Iso.png";
@@ -24,8 +25,12 @@ const Sidebar = ({ collapsed, setCollapsed }: IProps) => {
   // 👇 use the correct icon depending on the state.
   const icon = collapsed ? faChevronRight : faChevronLeft;
   return (
-    <div className={"bg-white text-[#656565] rounded-lg"}>
-      <div className={"flex flex-col justify-between h-full"}>
+    <aside
+      className={`bg-white text-[#656565] rounded-lg font-poppins fixed top-0 left-0 z-40 h-screen transition-all -translate-x-full sm:translate-x-0 ${
+        collapsed ? "w-20" : "w-40"
+      }`}
+    >
+      <div className={"flex flex-col h-full"}>
         {/* logo and collapse button */}
         <div
           className={`flex items-center border-b border-b-indigo-800 ${
@@ -80,16 +85,29 @@ const Sidebar = ({ collapsed, setCollapsed }: IProps) => {
           </div>
         </div>
         {/* Bottom collapse button */}
+        <div className="mb-5">
+          <button
+            className="flex items-center w-full font-semibold gap-2 px-3"
+            style={{
+              marginLeft: collapsed ? "auto" : "",
+              marginRight: collapsed ? "auto" : "",
+              justifyContent: collapsed ? "center" : "flex-start",
+            }}
+            onClick={() => logout(true)}
+          >
+            <FontAwesomeIcon
+              icon={faArrowRightFromBracket}
+              color="red"
+              size="xl"
+            />
+            {!collapsed && "Logout"}
+          </button>
+        </div>
         <div
           className={`self-bottom flex ${
             collapsed ? "justify-center" : "justify-end"
           }`}
         >
-          <div className="bg-indigo-800">
-            <button className="btn-primary" onClick={() => logout(true)}>
-              Log out
-            </button>
-          </div>
           <button
             className={
               "grid place-content-center hover:bg-indigo-800 w-10 h-10 rounded-full" // shape
@@ -100,7 +118,7 @@ const Sidebar = ({ collapsed, setCollapsed }: IProps) => {
           </button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 };
 export default Sidebar;

@@ -31,11 +31,16 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
       <tbody>
         {assets?.length > 0 ? (
           assets.map((asset) => {
+            const currentPrice =
+              asset?.bond_info?.batch !== undefined
+                ? asset.current_price * asset.bond_info.batch
+                : asset.current_price;
             const variation = calculateVariation(
               asset.purchase_price,
-              asset.current_price,
+              currentPrice,
               currency
             );
+
             return (
               <tr
                 key={"asset-" + asset.symbol}
@@ -59,13 +64,12 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
                   {getMoneyText(asset.purchase_price, currency)}
                 </td>
                 <td className="py-2">
-                  {getMoneyText(asset.current_price, currency)}
+                  {asset.hasError ? "-" : getMoneyText(currentPrice, currency)}
                 </td>
                 <td>
-                  {getMoneyText(
-                    asset.current_price * asset.final_amount,
-                    currency
-                  )}
+                  {asset.hasError
+                    ? "-"
+                    : getMoneyText(currentPrice * asset.final_amount, currency)}
                 </td>
                 <td
                   className={`py-2 font-bold ${
