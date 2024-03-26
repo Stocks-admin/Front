@@ -28,11 +28,14 @@ import {
   setBenchmarkStatus,
 } from "@/redux/slices/benchmarkSlice";
 import TableSkeleton from "@/components/skeletons/TableSkeleton";
+import { NumberParam, useQueryParam } from "use-query-params";
+import Pagination from "@/components/Pagination";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
   const [currencySelected, setCurrencySelected] = useState<0 | 1>(0);
   const [isCardOpen, setIsCardOpen] = useState(false);
+  const [page, setPage] = useQueryParam("page", NumberParam);
   const { getMoneyText, calculateVariation } = useMoneyTextGenerator();
   const dispatch = useDispatch();
   const portfolio = useSelector(
@@ -47,6 +50,12 @@ const Wallet = () => {
   const logout = useLogout();
   const [notify] = useToast();
   const [updatePortfolio] = useUpdatePortfolio();
+
+  useEffect(() => {
+    if (!page) {
+      setPage(1);
+    }
+  }, [page]);
 
   useEffect(() => {
     if (portfolio.status !== "success" && portfolio.status !== "loading") {
@@ -74,8 +83,6 @@ const Wallet = () => {
         });
     }
   }, []);
-
-  console.log("portfolio", portfolio);
 
   const portfolioValue = useMemo(() => {
     if (portfolio.status === "success") {
@@ -210,20 +217,30 @@ const Wallet = () => {
             assets={portfolio.stocks}
             currency={currencySelected}
             variationType={variationSelected === 0 ? "nominal" : "percentage"}
+            page={page || 1}
           />
         )}
       </div>
-      <div className="mt-3 flex gap-5 items-center">
-        <button
-          className="btn-primary rounded-full flex items-center"
-          onClick={() => setIsCardOpen(true)}
-        >
-          Agregar activo
-          <FontAwesomeIcon icon={faPlus} className="ml-2" />
-        </button>
-        <Link href="/transactions/massiveCreation" className="btn-secondary">
-          Cargar desde excel
-        </Link>
+      <div className="flex items-center justify-between">
+        <div className="mt-3 flex gap-5 items-center">
+          <button
+            className="btn-primary rounded-full flex items-center"
+            onClick={() => setIsCardOpen(true)}
+          >
+            Agregar activo
+            <FontAwesomeIcon icon={faPlus} className="ml-2" />
+          </button>
+          <Link href="/transactions/massiveCreation" className="btn-secondary">
+            Cargar desde excel
+          </Link>
+        </div>
+        <div className="flex items-center justify-between">
+          <Pagination
+            page={page || 1}
+            totalItems={portfolio?.stocks?.length || 0}
+            onChangePage={setPage}
+          />
+        </div>
       </div>
       <CreateTransaction
         isSheetOpen={isCardOpen}
@@ -238,6 +255,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }: GetServerSidePropsContext) => {
   const session = await getSession({ req });
+
+  console.log("session", session);
+
   if (!session) {
     return {
       redirect: {

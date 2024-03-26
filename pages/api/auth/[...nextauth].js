@@ -57,6 +57,7 @@ export default NextAuth({
         token.email = user.email;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
+        token.roles = user.user_roles;
       } else if (
         user &&
         token?.user_id &&
@@ -78,6 +79,7 @@ export default NextAuth({
         session.user.email = token.email;
         session.user.user_id = token.user_id;
         session.user.accessToken = token.accessToken;
+        session.user.roles = token.roles;
       }
 
       return session;

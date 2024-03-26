@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { getSymbolPrice } from "@/services/stockServices";
 import SideDrawer from "@/components/Drawer";
+import Link from "next/link";
 
 const schema = yup.object().shape({
   type: yup
@@ -24,7 +25,7 @@ const schema = yup.object().shape({
     .required()
     .label("Tipo de transaccion"),
   symbol: yup.string().required(),
-  market: yup.string().required(),
+  market: yup.string().nullable(),
   amount: yup.number().min(1).required().label("Cantidad de acciones"),
   currency: yup.string().oneOf(["ARS", "USD"]).required().label("Moneda"),
   price: yup.number().min(0).required().label("Precio"),
@@ -89,12 +90,17 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
     try {
       const symbol = watch("symbol");
       if (!symbol) return setPriceBlocked(false);
-      const date =
-        moment(watch("date")).format("YYYY-MM-DD") ||
-        moment().format("YYYY-MM-DD");
+      const date = moment(watch("date")).format("YYYY-MM-DD");
       const market = watch("market") || "nASDAQ";
       const symbolPrice = await getSymbolPrice(symbol, market, date);
-      if (symbolPrice.status === 200) setValue("price", symbolPrice.data.value);
+      const currency = watch("currency");
+      const symbolFinalPrice =
+        currency && currency === "USD"
+          ? symbolPrice?.data?.value || 0
+          : symbolPrice?.data?.value *
+              symbolPrice?.data?.conversionRate?.value || 0;
+      if (symbolPrice.status === 200)
+        setValue("price", +symbolFinalPrice.toFixed(2) || 0);
       setPriceBlocked(false);
     } catch (error) {
       setPriceBlocked(false);
@@ -109,7 +115,7 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
       title="Crear transaccion"
     >
       <div className="container">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="mb-5">
           <div className="form-group">
             <label htmlFor="type">Tipo de transaccion</label>
             <select
@@ -126,12 +132,6 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
 
           <div className="form-group">
             <label htmlFor="symbol">Simbolo</label>
-            {/* <input
-              type="text"
-              className={`form-control ${errors.symbol?.message && "error"}`}
-              id="symbol"
-              onChange={(e) => setSymbolValue(e.target.value)}
-            /> */}
             <SymbolInput setValue={setValue} />
             <p className="text-danger">{errors.symbol?.message}</p>
           </div>
@@ -176,29 +176,6 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
               <option value="ARS">ARS</option>
             </select>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="price">Precio</label>
-            <div className="flex justify-between items-center">
-              <input
-                type="number"
-                step={0.01}
-                className={`form-control flex-1 ${
-                  errors.price?.message && "error"
-                }`}
-                id="price"
-                disabled={priceBlocked}
-                {...register("price")}
-              />
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                className="px-2"
-                onClick={searchSymbolPrice}
-              />
-            </div>
-            <p className="text-danger">{errors.price?.message}</p>
-          </div>
-
           <div className="form-group">
             <label htmlFor="date">Fecha</label>
             <input
@@ -209,11 +186,38 @@ const CreateTransaction = ({ isSheetOpen, setIsSheetOpen }: IProps) => {
             />
             <p className="text-danger">{errors.date?.message}</p>
           </div>
+          <div className="form-group">
+            <label htmlFor="price">Precio</label>
+            <div className="flex justify-between items-center">
+              <input
+                type="number"
+                step={0.01}
+                className={`form-control flex-1 disabled:opacity-50 ${
+                  errors.price?.message && "error"
+                }`}
+                id="price"
+                disabled={priceBlocked}
+                {...register("price")}
+              />
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="px-2 cursor-pointer"
+                onClick={searchSymbolPrice}
+              />
+            </div>
+            <p className="text-danger">{errors.price?.message}</p>
+          </div>
 
           <button type="submit" className="btn btn-primary">
             Crear transaccion
           </button>
         </form>
+        <Link
+          className="btn btn-secondary mt-4 text-center"
+          href={"/transactions/massiveCreation"}
+        >
+          Cargar masivamente
+        </Link>
       </div>
     </SideDrawer>
   );
