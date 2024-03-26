@@ -9,14 +9,17 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons";
+import { ItemPrice } from "@/models/transactionModel";
 
 interface IProps {
-  prices: any;
+  prices: ItemPrice[];
 }
 
 const AdminStockSymbol = ({ prices }: IProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [priceToEdit, setPriceToEdit] = useState(undefined);
+  const [priceToEdit, setPriceToEdit] = useState<ItemPrice | undefined>(
+    undefined
+  );
   const router = useRouter();
   const { stockSymbol } = router.query;
 
@@ -40,8 +43,8 @@ const AdminStockSymbol = ({ prices }: IProps) => {
           <th></th>
         </thead>
         <tbody>
-          {prices.map((price: any) => (
-            <tr>
+          {prices.map((price) => (
+            <tr key={`price-${price.market}`}>
               <td>{price.stock_symbol}</td>
               <td>{price.market}</td>
               <td>
