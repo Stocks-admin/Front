@@ -21,6 +21,10 @@ export const createMassiveTransactions = (body: FormData) => {
   return axiosInstance.post("transactions/massiveCreateTransaction", body);
 };
 
+export const createMassiveTransactionsCocos = (body: FormData) => {
+  return axiosInstance.post("transactions/massiveCreateTransactionCocos", body);
+};
+
 export const deleteTransaction = (id: number) => {
   return axiosInstance.delete(`transactions/deleteTransaction/${id}`);
 };

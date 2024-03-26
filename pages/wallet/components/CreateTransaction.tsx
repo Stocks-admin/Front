@@ -25,7 +25,7 @@ const schema = yup.object().shape({
     .required()
     .label("Tipo de transaccion"),
   symbol: yup.string().required(),
-  market: yup.string().required(),
+  market: yup.string().nullable(),
   amount: yup.number().min(1).required().label("Cantidad de acciones"),
   currency: yup.string().oneOf(["ARS", "USD"]).required().label("Moneda"),
   price: yup.number().min(0).required().label("Precio"),

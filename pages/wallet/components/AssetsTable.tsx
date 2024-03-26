@@ -3,15 +3,32 @@ import { UserPortfolio } from "@/models/userModel";
 import Image from "next/image";
 import noImage from "@/public/static/images/noImage.jpg";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useCurrencyConverter from "@/hooks/useCurrencyConverter";
 
 interface AssetsTableProps {
   assets: UserPortfolio;
   variationType: "percentage" | "nominal";
   currency: 0 | 1;
+  page?: number;
 }
 
-const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
+const AssetsTable = ({
+  assets,
+  variationType,
+  currency,
+  page = 1,
+}: AssetsTableProps) => {
   const { calculateVariation, getMoneyText } = useMoneyTextGenerator();
+  const { convertToUsd } = useCurrencyConverter();
+  const [assetsPage, setAssetsPage] = useState(
+    assets.slice(page * 10 - 10, page * 10)
+  );
+
+  useEffect(() => {
+    setAssetsPage(assets.slice(page * 10 - 10, page * 10));
+    console.log("assetsPage", assets.slice(page * 10 - 10, page * 10));
+  }, [assets, page]);
 
   const router = useRouter();
 
@@ -29,17 +46,32 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
         </tr>
       </thead>
       <tbody>
-        {assets?.length > 0 ? (
-          assets.map((asset) => {
-            const currentPrice =
+        {assetsPage?.length > 0 ? (
+          assetsPage.map((asset) => {
+            let currentPrice =
               asset?.bond_info?.batch !== undefined
                 ? asset.current_price * asset.bond_info.batch
                 : asset.current_price;
+            if (asset.price_currency === "ARS") {
+              currentPrice = convertToUsd(currentPrice);
+            }
             const variation = calculateVariation(
               asset.purchase_price,
               currentPrice,
               currency
             );
+
+            const logo = () => {
+              if (asset.organization?.logo) {
+                return asset.organization?.logo;
+              } else if (asset.currency_info?.country.flag) {
+                return asset.currency_info?.country.flag;
+              } else if (asset.bond_info?.country.flag) {
+                return asset.bond_info?.country.flag;
+              } else {
+                return noImage.src;
+              }
+            };
 
             return (
               <tr
@@ -51,11 +83,11 @@ const AssetsTable = ({ assets, variationType, currency }: AssetsTableProps) => {
               >
                 <td className="py-2 flex">
                   <Image
-                    src={asset?.organization?.logo || noImage.src}
+                    src={logo()}
                     alt="logo"
                     width={30}
                     height={30}
-                    className="rounded-full"
+                    className="rounded-full aspect-square object-cover"
                   />
                 </td>
                 <td className="text-left">{asset.symbol}</td>
