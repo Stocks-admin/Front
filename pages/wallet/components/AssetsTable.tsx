@@ -27,7 +27,6 @@ const AssetsTable = ({
 
   useEffect(() => {
     setAssetsPage(assets.slice(page * 10 - 10, page * 10));
-    console.log("assetsPage", assets.slice(page * 10 - 10, page * 10));
   }, [assets, page]);
 
   const router = useRouter();
@@ -55,8 +54,12 @@ const AssetsTable = ({
             if (asset.price_currency === "ARS") {
               currentPrice = convertToUsd(currentPrice);
             }
+            let purchasePrice = asset.purchase_price;
+            if (asset.bond_info?.batch !== undefined) {
+              purchasePrice = asset.purchase_price * asset.bond_info.batch;
+            }
             const variation = calculateVariation(
-              asset.purchase_price,
+              purchasePrice,
               currentPrice,
               currency
             );
@@ -85,15 +88,16 @@ const AssetsTable = ({
                   <Image
                     src={logo()}
                     alt="logo"
-                    width={256}
-                    height={256}
+                    width={1024}
+                    height={1024}
+                    quality={100}
                     className="rounded-full aspect-square object-cover w-8 h-8"
                   />
                 </td>
                 <td className="text-left">{asset.symbol}</td>
                 <td className="py-2 text-left">{asset.final_amount}</td>
                 <td className="py-2">
-                  {getMoneyText(asset.purchase_price, currency)}
+                  {getMoneyText(purchasePrice, currency)}
                 </td>
                 <td className="py-2">
                   {asset.hasError ? "-" : getMoneyText(currentPrice, currency)}
