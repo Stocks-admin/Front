@@ -30,6 +30,7 @@ import {
 import TableSkeleton from "@/components/skeletons/TableSkeleton";
 import { NumberParam, useQueryParam } from "use-query-params";
 import Pagination from "@/components/Pagination";
+import useCurrencyConverter from "@/hooks/useCurrencyConverter";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -37,6 +38,7 @@ const Wallet = () => {
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [page, setPage] = useQueryParam("page", NumberParam);
   const { getMoneyText, calculateVariation } = useMoneyTextGenerator();
+  const { convertToUsd } = useCurrencyConverter();
   const dispatch = useDispatch();
   const portfolio = useSelector(
     (state: AppState) => state.portfolio,
@@ -87,7 +89,11 @@ const Wallet = () => {
   const portfolioValue = useMemo(() => {
     if (portfolio.status === "success") {
       return portfolio.stocks.reduce((acc, curr) => {
-        return acc + curr.current_price * curr.final_amount;
+        let currentPrice = curr.current_price;
+        if (curr.price_currency === "ARS") {
+          currentPrice = convertToUsd(currentPrice);
+        }
+        return acc + currentPrice * curr.final_amount;
       }, 0);
     }
     return 0;
@@ -96,7 +102,8 @@ const Wallet = () => {
   const portfolioPurchaseValue = useMemo(() => {
     if (portfolio.status === "success") {
       return portfolio.stocks.reduce((acc, curr) => {
-        return acc + curr.purchase_price * curr.final_amount;
+        let purchase_price = curr.purchase_price;
+        return acc + purchase_price * curr.final_amount;
       }, 0);
     }
     return 0;
