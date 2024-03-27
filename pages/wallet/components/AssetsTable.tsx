@@ -54,6 +54,10 @@ const AssetsTable = ({
             if (asset.price_currency === "ARS") {
               currentPrice = convertToUsd(currentPrice);
             }
+            let total = asset.current_price * asset.final_amount;
+            if (asset.price_currency === "ARS") {
+              total = convertToUsd(total);
+            }
             let purchasePrice = asset.purchase_price;
             if (asset.bond_info?.batch !== undefined) {
               purchasePrice = asset.purchase_price * asset.bond_info.batch;
@@ -102,11 +106,7 @@ const AssetsTable = ({
                 <td className="py-2">
                   {asset.hasError ? "-" : getMoneyText(currentPrice, currency)}
                 </td>
-                <td>
-                  {asset.hasError
-                    ? "-"
-                    : getMoneyText(currentPrice * asset.final_amount, currency)}
-                </td>
+                <td>{asset.hasError ? "-" : getMoneyText(total, currency)}</td>
                 <td
                   className={`py-2 font-bold ${
                     variation.result === "positive"
