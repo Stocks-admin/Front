@@ -95,7 +95,7 @@ const AssetsTable = ({
                     width={1024}
                     height={1024}
                     quality={100}
-                    className="rounded-full aspect-square object-cover w-8 h-8"
+                    className="rounded-full aspect-square w-8 h-8 overflow-hidden block object-center"
                   />
                 </td>
                 <td className="text-left">{asset.symbol}</td>

@@ -104,9 +104,9 @@ const Stocks = ({ allStocks }: IProps) => {
                   <Image
                     src={stock.logo || noImage.src}
                     alt={stock.symbol}
-                    width={256}
-                    height={256}
-                    className="rounded-full aspect-square object-cover w-8 h-8"
+                    width={1024}
+                    height={1024}
+                    className="w-10 h-10 rounded-full overflow-hidden block object-center"
                   />
                 </td>
                 <td className="font-semibold">{stock.symbol}</td>
