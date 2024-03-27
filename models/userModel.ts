@@ -14,6 +14,7 @@ export type UserStock = {
   bond_info?: Bond;
   currency_info?: Currency;
   hasError?: boolean;
+  type: "Stock" | "Bond" | "Currency";
 };
 
 export type User = {

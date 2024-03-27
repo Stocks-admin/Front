@@ -18,7 +18,29 @@ export const portfolioSlice = createSlice({
   initialState,
   reducers: {
     setPortfolio: (state, action: PayloadAction<UserStock[]>) => {
-      return { stocks: action.payload, status: "success" };
+      const orderedStocks = action.payload.sort((a, b) => {
+        let aPrice = 1,
+          bPrice = 1;
+
+        if (a.type === "Currency" && b.type !== "Currency") {
+          return -1;
+        }
+
+        if (a.bond_info?.batch !== undefined) {
+          aPrice = a.current_price * a.bond_info.batch;
+        } else if (!a.hasError) {
+          aPrice = a.current_price;
+        }
+
+        if (b.bond_info?.batch !== undefined) {
+          bPrice = b.current_price * b.bond_info.batch;
+        } else if (!b.hasError) {
+          bPrice = b.current_price;
+        }
+
+        return bPrice * b.final_amount - aPrice * a.final_amount;
+      });
+      return { stocks: orderedStocks, status: "success" };
     },
     addToPortfolio: (state, action: PayloadAction<UserStock>) => {
       state.stocks.push(action.payload);
