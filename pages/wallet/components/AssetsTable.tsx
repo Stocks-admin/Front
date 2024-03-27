@@ -85,9 +85,9 @@ const AssetsTable = ({
                   <Image
                     src={logo()}
                     alt="logo"
-                    width={30}
-                    height={30}
-                    className="rounded-full aspect-square object-cover"
+                    width={256}
+                    height={256}
+                    className="rounded-full aspect-square object-cover w-8 h-8"
                   />
                 </td>
                 <td className="text-left">{asset.symbol}</td>
