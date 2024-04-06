@@ -1,10 +1,11 @@
+import SortableTable from "@/components/SortableTable";
+import useCurrencyConverter from "@/hooks/useCurrencyConverter";
 import useMoneyTextGenerator from "@/hooks/useMoneyTextGenerator";
-import { UserPortfolio } from "@/models/userModel";
+import { UserPortfolio, UserStock } from "@/models/userModel";
 import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import noImage from "@/public/static/images/noImage.jpg";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import useCurrencyConverter from "@/hooks/useCurrencyConverter";
 
 interface AssetsTableProps {
   assets: UserPortfolio;
@@ -13,124 +14,150 @@ interface AssetsTableProps {
   page?: number;
 }
 
-const AssetsTable = ({
-  assets,
-  variationType,
-  currency,
-  page = 1,
-}: AssetsTableProps) => {
+const columns = [
+  { key: "image", label: " " },
+  { key: "name", label: "Activo", sortable: true },
+  { key: "amount", label: "Cantidad", sortable: true },
+  { key: "purchase_price", label: "Precio compra", sortable: true },
+  { key: "current_price", label: "Precio actual", sortable: true },
+  { key: "total", label: "Total", sortable: true },
+  { key: "variation", label: "Variacion", sortable: true },
+];
+
+const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
   const { calculateVariation, getMoneyText } = useMoneyTextGenerator();
   const { convertToUsd } = useCurrencyConverter();
-  const [assetsPage, setAssetsPage] = useState(
-    assets.slice(page * 10 - 10, page * 10)
-  );
-
-  useEffect(() => {
-    setAssetsPage(assets.slice(page * 10 - 10, page * 10));
-  }, [assets, page]);
-
+  const [orderInfo, setOrderInfo] = useState({
+    column: "name",
+    direction: "asc",
+  });
   const router = useRouter();
 
+  const parseData = (assetsToParse: UserPortfolio) => {
+    const newArray = new Array(assetsToParse.length);
+    assetsToParse.forEach((asset, index) => {
+      let currentPrice =
+        asset?.bond_info?.batch !== undefined
+          ? asset.current_price * asset.bond_info.batch
+          : asset.current_price;
+      if (asset.price_currency === "ARS") {
+        currentPrice = convertToUsd(currentPrice);
+      }
+      let total = asset.current_price * asset.final_amount;
+      if (asset.price_currency === "ARS") {
+        total = convertToUsd(total);
+      }
+      let purchasePrice = asset.purchase_price;
+      if (asset.bond_info?.batch !== undefined) {
+        purchasePrice = asset.purchase_price * asset.bond_info.batch;
+      }
+      const variation = calculateVariation(
+        purchasePrice * asset.final_amount,
+        currentPrice * asset.final_amount,
+        currency
+      );
+
+      const logo = () => {
+        if (asset.organization?.logo) {
+          return asset.organization?.logo;
+        } else if (asset.currency_info?.country.flag) {
+          return asset.currency_info?.country.flag;
+        } else if (asset.bond_info?.country.flag) {
+          return asset.bond_info?.country.flag;
+        } else {
+          return noImage.src;
+        }
+      };
+
+      newArray[index] = {
+        image: (
+          <Image
+            src={logo()}
+            alt="logo"
+            width={1024}
+            height={1024}
+            quality={100}
+            className="rounded-full aspect-square w-8 h-8 overflow-hidden block object-center"
+          />
+        ),
+        name: asset.symbol,
+        amount: asset.final_amount,
+        purchase_price: getMoneyText(purchasePrice, currency),
+        current_price: getMoneyText(currentPrice, currency),
+        total: getMoneyText(total, currency),
+        variation: (
+          <div
+            className={`py-2 font-bold ${
+              variation.result === "positive"
+                ? "text-bull_green"
+                : "text-bear_red"
+            }`}
+          >
+            {variation.result === "positive" && "+"}
+            {variation[variationType]}
+            {variationType === "percentage" && "%"}
+            {variation.result === "positive" ? " ▲" : " ▼"}
+          </div>
+        ),
+      };
+    });
+    return newArray;
+  };
+
+  const [sortedData, setSortedData] = useState(parseData(assets));
+
+  const handleSort = () => {
+    const { column, direction } = orderInfo;
+    const sorted = [...assets].sort((a, b) => {
+      if (column === "variation") {
+        console.log("sorting by variation", a, b);
+        let aVariation;
+        let bVariation;
+        if (variationType === "percentage") {
+          aVariation =
+            ((a.current_price - a.purchase_price) / a.purchase_price) * 100;
+          bVariation =
+            ((b.current_price - b.purchase_price) / b.purchase_price) * 100;
+        } else {
+          aVariation = (a.current_price - a.purchase_price) * a.final_amount;
+          bVariation = (b.current_price - b.purchase_price) * b.final_amount;
+        }
+        if (direction === "asc") {
+          return aVariation - bVariation;
+        } else {
+          return bVariation - aVariation;
+        }
+      }
+      if (direction === "asc") {
+        return a[column] < b[column] ? -1 : 1;
+      } else {
+        return a[column] > b[column] ? -1 : 1;
+      }
+    });
+    setSortedData(parseData(sorted));
+  };
+
+  const onChangeSort = (column: string, direction: string) => {
+    setOrderInfo({ column, direction });
+  };
+
+  useEffect(() => {
+    handleSort();
+  }, [orderInfo, variationType, currency, assets]);
+
+  const handleRowClick = (rowNumber: number) => {
+    router.push(`/transactions?symbol=${assets[rowNumber].symbol}`);
+  };
+
   return (
-    <table className="w-full">
-      <thead className="text-right mb-2">
-        <tr className="py-2">
-          <th></th>
-          <th className="text-left">Activo</th>
-          <th className="text-left">Cantidad</th>
-          <th>Precio compra</th>
-          <th>Precio actual</th>
-          <th>Total</th>
-          <th className="pe-4">Variacion</th>
-        </tr>
-      </thead>
-      <tbody>
-        {assetsPage?.length > 0 ? (
-          assetsPage.map((asset) => {
-            let currentPrice =
-              asset?.bond_info?.batch !== undefined
-                ? asset.current_price * asset.bond_info.batch
-                : asset.current_price;
-            if (asset.price_currency === "ARS") {
-              currentPrice = convertToUsd(currentPrice);
-            }
-            let total = asset.current_price * asset.final_amount;
-            if (asset.price_currency === "ARS") {
-              total = convertToUsd(total);
-            }
-            let purchasePrice = asset.purchase_price;
-            if (asset.bond_info?.batch !== undefined) {
-              purchasePrice = asset.purchase_price * asset.bond_info.batch;
-            }
-            const variation = calculateVariation(
-              purchasePrice,
-              currentPrice,
-              currency
-            );
-
-            const logo = () => {
-              if (asset.organization?.logo) {
-                return asset.organization?.logo;
-              } else if (asset.currency_info?.country.flag) {
-                return asset.currency_info?.country.flag;
-              } else if (asset.bond_info?.country.flag) {
-                return asset.bond_info?.country.flag;
-              } else {
-                return noImage.src;
-              }
-            };
-
-            return (
-              <tr
-                key={"asset-" + asset.symbol}
-                className="table-bg-gradient overflow-hidden py-2 text-right cursor-pointer"
-                onClick={() =>
-                  router.push(`/transactions?symbol=${asset.symbol}`)
-                }
-              >
-                <td className="py-2 flex">
-                  <Image
-                    src={logo()}
-                    alt="logo"
-                    width={1024}
-                    height={1024}
-                    quality={100}
-                    className="rounded-full aspect-square w-8 h-8 overflow-hidden block object-center"
-                  />
-                </td>
-                <td className="text-left">{asset.symbol}</td>
-                <td className="py-2 text-left">{asset.final_amount}</td>
-                <td className="py-2">
-                  {getMoneyText(purchasePrice, currency)}
-                </td>
-                <td className="py-2">
-                  {asset.hasError ? "-" : getMoneyText(currentPrice, currency)}
-                </td>
-                <td>{asset.hasError ? "-" : getMoneyText(total, currency)}</td>
-                <td
-                  className={`py-2 font-bold ${
-                    variation.result === "positive"
-                      ? "text-bull_green"
-                      : "text-bear_red"
-                  }`}
-                >
-                  {variation.result === "positive" && "+"}
-                  {variation[variationType]}
-                  {variationType === "percentage" && "%"}
-                  {variation.result === "positive" ? " ▲" : " ▼"}
-                </td>
-              </tr>
-            );
-          })
-        ) : (
-          <td colSpan={6}>
-            <h2 className="text-center">
-              No hay ningun activo cargado actualmente
-            </h2>
-          </td>
-        )}
-      </tbody>
-    </table>
+    <SortableTable
+      clickable
+      columns={columns}
+      data={sortedData}
+      pagination
+      onSort={onChangeSort}
+      onRowClick={handleRowClick}
+    />
   );
 };
 

@@ -6,7 +6,6 @@ import { getSession } from "next-auth/react";
 import SidebarLayout from "@/components/Layout/SidebarLayout";
 import ToggleSwitch from "@/components/ToggleSwitch";
 import { getUserBenchmark, getUserPortfolio } from "@/services/userServices";
-import AssetsTable from "./components/AssetsTable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -31,6 +30,7 @@ import TableSkeleton from "@/components/skeletons/TableSkeleton";
 import { NumberParam, useQueryParam } from "use-query-params";
 import Pagination from "@/components/Pagination";
 import useCurrencyConverter from "@/hooks/useCurrencyConverter";
+import AssetsTable from "./components/AssetsTable";
 
 const Wallet = () => {
   const [variationSelected, setVariationSelected] = useState<0 | 1>(0);
@@ -226,6 +226,12 @@ const Wallet = () => {
             variationType={variationSelected === 0 ? "nominal" : "percentage"}
             page={page || 1}
           />
+          // <AssetsTable
+          //   assets={portfolio.stocks}
+          //   currency={currencySelected}
+          //   variationType={variationSelected === 0 ? "nominal" : "percentage"}
+          //   page={page || 1}
+          // />
         )}
       </div>
       <div className="flex items-center justify-between">
@@ -241,13 +247,13 @@ const Wallet = () => {
             Cargar desde excel
           </Link>
         </div>
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <Pagination
             page={page || 1}
             totalItems={portfolio?.stocks?.length || 0}
             onChangePage={setPage}
           />
-        </div>
+        </div> */}
       </div>
       <CreateTransaction
         isSheetOpen={isCardOpen}

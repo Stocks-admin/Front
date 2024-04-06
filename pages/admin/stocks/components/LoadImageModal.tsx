@@ -60,7 +60,7 @@ const LoadImageModal = ({ open, setOpen, symbol }: IProps) => {
       .then((resp) => {
         setOpen(false);
         notify("Imagen cargada correctamente", "success");
-        router.reload();
+        router.push("/admin/stocks");
       })
       .catch((err) => {
         console.log("ERR", err);

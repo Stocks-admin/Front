@@ -29,7 +29,7 @@ const AdminLayout = ({ children }: IProps) => {
               Stocks
             </Link>
             <Link
-              href="#"
+              href="/admin/users"
               className={`py-2 hover:text-white ${
                 router.asPath.includes("/users") && "text-white"
               }`}

@@ -79,7 +79,7 @@ export default NextAuth({
         session.user.email = token.email;
         session.user.user_id = token.user_id;
         session.user.accessToken = token.accessToken;
-        session.user.roles = token.roles;
+        session.user.user_roles = token.roles;
       }
 
       return session;

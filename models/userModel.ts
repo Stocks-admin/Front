@@ -3,6 +3,7 @@ import { Bond, Currency, Organization } from "./OrganizationModel";
 export type UserPortfolio = UserStock[];
 
 export type UserStock = {
+  [key: string]: any;
   user_id: number;
   symbol: string;
   market: string;
@@ -23,7 +24,8 @@ export type User = {
   email: string;
   accessToken: string;
   refreshToken: string;
-  roles: {
+  phone: string;
+  user_roles: {
     user_id: number;
     role: UserRole;
   }[];
