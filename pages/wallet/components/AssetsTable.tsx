@@ -113,14 +113,28 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
         console.log("sorting by variation", a, b);
         let aVariation;
         let bVariation;
+        let aCurrentPrice = a.current_price;
+        let bCurrentPrice = b.current_price;
+        if (a.price_currency === "ARS") {
+          aCurrentPrice = convertToUsd(aCurrentPrice);
+        }
+        if (b.price_currency === "ARS") {
+          bCurrentPrice = convertToUsd(bCurrentPrice);
+        }
+        if (b.type === "Bond" && b?.bond_info?.batch) {
+          bCurrentPrice = bCurrentPrice * b?.bond_info?.batch;
+        }
+        if (a.type === "Bond" && a?.bond_info?.batch) {
+          aCurrentPrice = aCurrentPrice * a?.bond_info?.batch;
+        }
         if (variationType === "percentage") {
           aVariation =
-            ((a.current_price - a.purchase_price) / a.purchase_price) * 100;
+            ((aCurrentPrice - a.purchase_price) / a.purchase_price) * 100;
           bVariation =
-            ((b.current_price - b.purchase_price) / b.purchase_price) * 100;
+            ((bCurrentPrice - b.purchase_price) / b.purchase_price) * 100;
         } else {
-          aVariation = (a.current_price - a.purchase_price) * a.final_amount;
-          bVariation = (b.current_price - b.purchase_price) * b.final_amount;
+          aVariation = (aCurrentPrice - a.purchase_price) * a.final_amount;
+          bVariation = (bCurrentPrice - b.purchase_price) * b.final_amount;
         }
         if (direction === "asc") {
           return aVariation - bVariation;
