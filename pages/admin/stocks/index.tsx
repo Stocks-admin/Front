@@ -158,7 +158,7 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
-  if (session.user.roles.some((role) => role.role === "ADMIN")) {
+  if (session.user.user_roles.some((role) => role.role === "ADMIN")) {
     try {
       const allStocks = await getAllStocks();
 

@@ -74,6 +74,7 @@ const SortableTable = ({
           {columns.map((column) => {
             return (
               <th
+                key={`head-column-${column.key}`}
                 onClick={() => column.sortable && handleSort(column.key)}
                 className=""
               >
@@ -103,11 +104,14 @@ const SortableTable = ({
             return (
               <tr
                 className="text-right"
+                key={`sortable-row-${index}`}
                 onClick={() => onRowClick && onRowClick(index)}
                 style={{ cursor: onRowClick ? "pointer" : "default" }}
               >
                 {columns.map((column) => {
-                  return <td>{row[column.key]}</td>;
+                  return (
+                    <td key={`column-${column.key}`}>{row[column.key]}</td>
+                  );
                 })}
               </tr>
             );
