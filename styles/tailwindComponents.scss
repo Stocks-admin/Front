@@ -44,6 +44,35 @@
         )
         border-box;
   }
+
+  .rounded-table {
+    border-collapse: collapse;
+
+    td {
+      // border: 0;
+      border: solid 1px transparent;
+      border-style: solid none;
+      padding-left: 0;
+      padding-right: 0;
+      /* padding: 10px; */
+    }
+
+    td:first-child,
+    th:first-child {
+      border-left-style: solid;
+      border-top-left-radius: 999px;
+      border-bottom-left-radius: 999px;
+      padding-left: 1rem;
+    }
+
+    td:last-child,
+    th:last-child {
+      border-right-style: solid;
+      border-bottom-right-radius: 999px;
+      border-top-right-radius: 999px;
+      padding-right: 1rem;
+    }
+  }
 }
 
 .bg-gradient {
@@ -57,31 +86,26 @@
 }
 
 .table-bg-gradient {
-  td {
+  tbody tr {
     background: rgb(250, 250, 250);
     background: linear-gradient(
       0deg,
       rgba(250, 250, 250, 1) 0%,
       rgba(255, 255, 255, 1) 100%
     );
-    // background: red;
-  }
-  td:first-of-type {
-    border-radius: 9999px 0 0 9999px;
-    padding-left: 15px;
+    transition: background-color 0.3s ease; /* Agregamos una transición para suavizar el cambio */
   }
 
-  td:last-of-type {
-    border-radius: 0 9999px 9999px 0;
-    padding-right: 16px;
+  tbody tr:hover {
+    background: rgb(
+      220,
+      220,
+      220
+    ); /* Cambiamos el color de fondo al hacer hover */
+    background: linear-gradient(
+      0deg,
+      rgba(220, 220, 220, 1) 0%,
+      rgba(230, 230, 230, 1) 100%
+    );
   }
-}
-
-.table-bg-gradient:hover td {
-  background: rgb(250, 250, 250);
-  background: linear-gradient(
-    180deg,
-    rgba(250, 250, 250, 0) 54%,
-    rgba(0, 0, 0, 1) 100%
-  );
 }

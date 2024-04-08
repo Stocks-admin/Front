@@ -32,3 +32,7 @@ export const updateItemPrice = async (body: UpdatePriceBody) => {
     body
   );
 };
+
+export const getAllUsers = async () => {
+  return await axios.get(`${process.env.NEXT_PUBLIC_API_URL}user/allUsers`);
+};
