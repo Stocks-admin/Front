@@ -204,14 +204,14 @@ const Wallet = () => {
               benchmark.benchmark.uva < 0 ? "text-bear_red" : "text-bull_green"
             }`}
           >
-            Dolar: {benchmark.benchmark.dollar.toLocaleString()}%
+            Dolar: {benchmark?.benchmark?.dollar?.toLocaleString() || "-"}%
           </h2>
           <h2
             className={`font-circular ${
               benchmark.benchmark.uva < 0 ? "text-bear_red" : "text-bull_green"
             }`}
           >
-            Uva: {benchmark.benchmark.uva.toLocaleString()}%
+            Uva: {benchmark?.benchmark?.uva?.toLocaleString() || "-"}%
           </h2>
         </div>
       </div>

@@ -110,7 +110,6 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
     const { column, direction } = orderInfo;
     const sorted = [...assets].sort((a, b) => {
       if (column === "variation") {
-        console.log("sorting by variation", a, b);
         let aVariation;
         let bVariation;
         let aCurrentPrice = a.current_price;

@@ -23,7 +23,7 @@ const AdminUsers = ({ users }: IProps) => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr>
+              <tr key={`admin-user-${user.user_id}`}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
