@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface IBenchmark {
-  status: "idle" | "loading" | "failed" | "success";
+  status: "idle" | "loading" | "failed" | "success" | "impersonated";
   benchmark: {
     dollar: number;
     uva: number;
@@ -22,7 +22,7 @@ export const benchmarkSlice = createSlice({
   initialState,
   reducers: {
     setBenchmark: (state, action: PayloadAction<IBenchmark["benchmark"]>) => {
-      return { benchmark: action.payload, status: "success" };
+      return { ...state, benchmark: action.payload };
     },
     setBenchmarkStatus: (
       state,

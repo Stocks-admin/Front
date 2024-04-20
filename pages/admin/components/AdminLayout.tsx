@@ -37,12 +37,12 @@ const AdminLayout = ({ children }: IProps) => {
               Users
             </Link>
             <Link
-              href="#"
+              href="/admin/impersonate"
               className={`py-2 hover:text-white ${
-                router.asPath.includes("/products") && "text-white"
+                router.asPath.includes("/impersonate") && "text-white"
               }`}
             >
-              Products
+              Impersonate
             </Link>
             <Link
               href="#"

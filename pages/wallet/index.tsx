@@ -151,13 +151,15 @@ const Wallet = () => {
     <SidebarLayout>
       <div className="flex justify-end my-3">
         {process.env.NEXT_PUBLIC_SCOPE === "development" && (
-          <button onClick={createTransactions} className="btn-secondary">
-            Crear transacciones falsas
-          </button>
+          <>
+            <button onClick={createTransactions} className="btn-secondary">
+              Crear transacciones falsas
+            </button>
+            <button onClick={cleanTransactions} className="btn-secondary">
+              Limpiar transacciones
+            </button>
+          </>
         )}
-        <button onClick={cleanTransactions} className="btn-secondary">
-          Limpiar transacciones
-        </button>
         <ToggleSwitch
           option1="$"
           option2="%"
@@ -268,8 +270,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   res,
 }: GetServerSidePropsContext) => {
   const session = await getSession({ req });
-
-  console.log("session", session);
 
   if (!session) {
     return {

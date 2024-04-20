@@ -79,7 +79,10 @@ const LoginForm = ({
           className={`form-control ${errors.email ? "is-invalid" : ""}`}
         />
       </div>
-      <Link href={"#"} className="w-full text-center text-sm mb-5">
+      <Link
+        href={"/reset-password"}
+        className="w-full text-center text-sm mb-5"
+      >
         Olvidaste tu contraseña?
       </Link>
       <button

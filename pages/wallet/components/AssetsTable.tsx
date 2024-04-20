@@ -33,6 +33,8 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
   });
   const router = useRouter();
 
+  console.log("ASSETS", assets);
+
   const parseData = (assetsToParse: UserPortfolio) => {
     const newArray = new Array(assetsToParse.length);
     assetsToParse.forEach((asset, index) => {
@@ -47,13 +49,16 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
       if (asset.price_currency === "ARS") {
         total = convertToUsd(total);
       }
-      let purchasePrice = asset.purchase_price;
+      let purchasePrice = asset?.purchase_price || 0;
       if (asset.bond_info?.batch !== undefined) {
         purchasePrice = asset.purchase_price * asset.bond_info.batch;
       }
+      const amount = asset.bond_info?.batch
+        ? asset.final_amount / asset.bond_info.batch
+        : asset.final_amount;
       const variation = calculateVariation(
-        purchasePrice * asset.final_amount,
-        currentPrice * asset.final_amount,
+        purchasePrice * amount,
+        currentPrice * amount,
         currency
       );
 

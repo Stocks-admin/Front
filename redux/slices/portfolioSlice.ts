@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface PortfolioState {
-  status: "idle" | "loading" | "failed" | "success";
+  status: "idle" | "loading" | "failed" | "success" | "impersonated";
   stocks: UserPortfolio;
 }
 
@@ -27,7 +27,7 @@ export const portfolioSlice = createSlice({
           b.current_price * b.final_amount - a.current_price * a.final_amount
         );
       });
-      return { stocks: orderedStocks, status: "success" };
+      return { stocks: orderedStocks, status: state.status };
     },
     addToPortfolio: (state, action: PayloadAction<UserStock>) => {
       state.stocks.push(action.payload);
