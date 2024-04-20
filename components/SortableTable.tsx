@@ -35,10 +35,11 @@ const SortableTable = ({
   const [sortColumn, setSortColumn] = useState<string | null>(
     defaultSortColumn || null
   );
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortDirection, setSortDirection] =
     useState<string>(defaultSortDirection);
   const [paginatedData, setPaginatedData] = useState(
-    pagination ? data.slice(0, 10) : data
+    pagination ? data.slice(0, itemsPerPage) : data
   );
   const [page, setPage] = useQueryParam("page", NumberParam);
 
@@ -46,7 +47,7 @@ const SortableTable = ({
     if (!page && pagination) {
       setPage(1);
     }
-  }, [page]);
+  }, [page, pagination]);
 
   const handleSort = (key: string) => {
     if (sortColumn === key) {
@@ -58,17 +59,38 @@ const SortableTable = ({
   };
 
   useEffect(() => {
-    setPaginatedData(data.slice((page || 1) * 10 - 10, (page || 1) * 10));
-  }, [data, page]);
+    setPaginatedData(
+      data.slice(
+        (page || 1) * itemsPerPage - itemsPerPage,
+        (page || 1) * itemsPerPage
+      )
+    );
+  }, [data, page, itemsPerPage]);
 
   useEffect(() => {
     if (sortColumn) {
       onSort(sortColumn, sortDirection);
     }
-  }, [sortColumn, sortDirection]);
+  }, [sortColumn, sortDirection, onSort]);
 
   return (
     <>
+      <div className="w-full flex items-center justify-end gap-2 mb-3">
+        <label className="text-sm">Items per page</label>
+        <select
+          className="rounded-md border border-gray-300 p-1"
+          value={itemsPerPage}
+          onChange={(e) => {
+            setItemsPerPage(parseInt(e.target.value));
+            setPage(1);
+          }}
+        >
+          <option value={10}>10</option>
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+      </div>
       <table className="w-full rounded-table table-bg-gradient">
         <thead className="mb-2">
           {columns.map((column) => {
@@ -122,6 +144,7 @@ const SortableTable = ({
         <Pagination
           page={page || 1}
           totalItems={data.length}
+          itemsPerPage={itemsPerPage}
           onChangePage={(page) => setPage(page)}
         />
       )}

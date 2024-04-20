@@ -39,7 +39,7 @@ const useMoneyTextGenerator = () => {
           maximumFractionDigits: 2,
         })}`;
       } else {
-        return `${valueToConvert.toLocaleString("es-AR", {
+        return `${valueToConvert?.toLocaleString("es-AR", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`;

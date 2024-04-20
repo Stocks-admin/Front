@@ -9,10 +9,16 @@ interface IProps {
   page: number;
   onChangePage: (page: number) => void;
   totalItems: number;
+  itemsPerPage?: number;
 }
 
-const Pagination = ({ page, onChangePage, totalItems }: IProps) => {
-  const totalPages = Math.ceil(totalItems / 10);
+const Pagination = ({
+  page,
+  onChangePage,
+  totalItems,
+  itemsPerPage = 10,
+}: IProps) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
@@ -44,11 +50,11 @@ const Pagination = ({ page, onChangePage, totalItems }: IProps) => {
       <span className="text-sm text-gray-700 mt-2">
         Showing{" "}
         <span className="font-semibold text-gray-900 dark:text-white">
-          {page * 10 - 9}
+          {page * itemsPerPage - 9}
         </span>{" "}
         to{" "}
         <span className="font-semibold text-gray-900 dark:text-white">
-          {page * 10 > totalItems ? totalItems : page * 10}
+          {page * itemsPerPage > totalItems ? totalItems : page * 10}
         </span>{" "}
         of{" "}
         <span className="font-semibold text-gray-900 dark:text-white">

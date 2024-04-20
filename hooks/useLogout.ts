@@ -6,6 +6,7 @@ import {
 } from "@/redux/slices/portfolioSlice";
 import { signOut } from "next-auth/react";
 import { cleanDollarValue } from "@/redux/slices/dollarSlice";
+import { deleteCookie } from "cookies-next";
 
 export default function useLogout() {
   const { dispatch } = store;
@@ -16,11 +17,13 @@ export default function useLogout() {
       if (resp.status !== 200) {
         dispatch(cleanPortfolio());
         dispatch(cleanDollarValue());
+        deleteCookie("x-impersonated-token");
         await signOut({ callbackUrl: "/login" });
         setTimeout(() => {
           window.location.href = "/login";
         }, 1000);
       } else {
+        deleteCookie("x-impersonated-token");
         dispatch(cleanPortfolio());
         dispatch(cleanDollarValue());
         await signOut({ callbackUrl: "/login" });
@@ -31,6 +34,7 @@ export default function useLogout() {
       }
     } catch (error) {
       dispatch(cleanPortfolio());
+      deleteCookie("x-impersonated-token");
       dispatch(cleanDollarValue());
       if (!redirect) return;
       window.location.href = "/login";
