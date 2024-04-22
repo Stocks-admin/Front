@@ -50,11 +50,18 @@ const SortableTable = ({
   }, [page, pagination]);
 
   const handleSort = (key: string) => {
+    let newSortDirection;
+    const newSortColumn = key;
     if (sortColumn === key) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      newSortDirection = sortDirection === "asc" ? "desc" : "asc";
+      setSortDirection(newSortDirection);
     } else {
+      newSortDirection = "asc";
       setSortColumn(key);
       setSortDirection("asc");
+    }
+    if (newSortColumn && newSortDirection) {
+      onSort(newSortColumn, newSortDirection);
     }
   };
 
@@ -67,11 +74,11 @@ const SortableTable = ({
     );
   }, [data, page, itemsPerPage]);
 
-  useEffect(() => {
-    if (sortColumn) {
-      onSort(sortColumn, sortDirection);
-    }
-  }, [sortColumn, sortDirection, onSort]);
+  // useEffect(() => {
+  //   if (sortColumn) {
+  //     onSort(sortColumn, sortDirection);
+  //   }
+  // }, [sortColumn, sortDirection, onSort]);
 
   return (
     <>

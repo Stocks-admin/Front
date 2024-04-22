@@ -33,8 +33,6 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
   });
   const router = useRouter();
 
-  console.log("ASSETS", assets);
-
   const parseData = (assetsToParse: UserPortfolio) => {
     const newArray = new Array(assetsToParse.length);
     assetsToParse.forEach((asset, index) => {
@@ -119,26 +117,23 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
         let bVariation;
         let aCurrentPrice = a.current_price;
         let bCurrentPrice = b.current_price;
+        let purchasePriceA = a.purchase_price;
+        let purchasePriceB = b.purchase_price;
+
         if (a.price_currency === "ARS") {
           aCurrentPrice = convertToUsd(aCurrentPrice);
         }
         if (b.price_currency === "ARS") {
           bCurrentPrice = convertToUsd(bCurrentPrice);
         }
-        if (b.type === "Bond" && b?.bond_info?.batch) {
-          bCurrentPrice = bCurrentPrice * b?.bond_info?.batch;
-        }
-        if (a.type === "Bond" && a?.bond_info?.batch) {
-          aCurrentPrice = aCurrentPrice * a?.bond_info?.batch;
-        }
         if (variationType === "percentage") {
           aVariation =
-            ((aCurrentPrice - a.purchase_price) / a.purchase_price) * 100;
+            ((aCurrentPrice - purchasePriceA) / purchasePriceA) * 100;
           bVariation =
-            ((bCurrentPrice - b.purchase_price) / b.purchase_price) * 100;
+            ((bCurrentPrice - purchasePriceB) / purchasePriceB) * 100;
         } else {
-          aVariation = (aCurrentPrice - a.purchase_price) * a.final_amount;
-          bVariation = (bCurrentPrice - b.purchase_price) * b.final_amount;
+          aVariation = (aCurrentPrice - purchasePriceA) * a.final_amount;
+          bVariation = (bCurrentPrice - purchasePriceB) * b.final_amount;
         }
         if (direction === "asc") {
           return aVariation - bVariation;
@@ -146,10 +141,26 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
           return bVariation - aVariation;
         }
       }
+      let aValue = a[column];
+      let bValue = b[column];
+      if (!isNaN(aValue) && !isNaN(bValue)) {
+        if (a.currency_info?.symbol === "ARS") {
+          aValue = convertToUsd(aValue);
+        }
+        if (b.currency_info?.symbol === "ARS") {
+          bValue = convertToUsd(bValue);
+        }
+        if (a.bond_info?.batch !== undefined) {
+          aValue = aValue * a.bond_info.batch;
+        }
+        if (b.bond_info?.batch !== undefined) {
+          bValue = bValue * b.bond_info.batch;
+        }
+      }
       if (direction === "asc") {
-        return a[column] < b[column] ? -1 : 1;
+        return aValue < bValue ? -1 : 1;
       } else {
-        return a[column] > b[column] ? -1 : 1;
+        return aValue > bValue ? -1 : 1;
       }
     });
     setSortedData(parseData(sorted));
