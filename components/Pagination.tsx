@@ -50,7 +50,7 @@ const Pagination = ({
       <span className="text-sm text-gray-700 mt-2">
         Showing{" "}
         <span className="font-semibold text-gray-900 dark:text-white">
-          {page * itemsPerPage - 9}
+          {page * itemsPerPage - (itemsPerPage - 1)}
         </span>{" "}
         to{" "}
         <span className="font-semibold text-gray-900 dark:text-white">
