@@ -90,10 +90,11 @@ const Wallet = () => {
     if (portfolio.status === "success") {
       return portfolio.stocks.reduce((acc, curr) => {
         let currentPrice = curr.current_price;
+        const batch = curr.bond_info?.batch || 1;
         if (curr.price_currency === "ARS") {
           currentPrice = convertToUsd(currentPrice);
         }
-        return acc + currentPrice * curr.final_amount;
+        return acc + currentPrice * (curr.final_amount / batch);
       }, 0);
     }
     return 0;
@@ -103,6 +104,7 @@ const Wallet = () => {
     if (portfolio.status === "success") {
       return portfolio.stocks.reduce((acc, curr) => {
         let purchase_price = curr.purchase_price;
+        const batch = curr.bond_info?.batch || 1;
         return acc + purchase_price * curr.final_amount;
       }, 0);
     }
