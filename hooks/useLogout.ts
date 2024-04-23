@@ -18,7 +18,7 @@ export default function useLogout() {
         dispatch(cleanPortfolio());
         dispatch(cleanDollarValue());
         deleteCookie("x-impersonated-token");
-        await signOut({ callbackUrl: "/login" });
+        await signOut({ redirect: false });
         setTimeout(() => {
           window.location.href = "/login";
         }, 1000);
@@ -26,7 +26,7 @@ export default function useLogout() {
         deleteCookie("x-impersonated-token");
         dispatch(cleanPortfolio());
         dispatch(cleanDollarValue());
-        await signOut({ callbackUrl: "/login" });
+        await signOut({ redirect: false });
         if (!redirect) return;
         setTimeout(() => {
           window.location.href = "/login";
