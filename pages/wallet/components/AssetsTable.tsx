@@ -36,14 +36,13 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
   const parseData = (assetsToParse: UserPortfolio) => {
     const newArray = new Array(assetsToParse.length);
     assetsToParse.forEach((asset, index) => {
-      let currentPrice =
-        asset?.bond_info?.batch !== undefined
-          ? asset.current_price * asset.bond_info.batch
-          : asset.current_price;
+      let currentPrice = asset.current_price;
       if (asset.price_currency === "ARS") {
         currentPrice = convertToUsd(currentPrice);
       }
-      let total = asset.current_price * asset.final_amount;
+      let total =
+        asset.current_price *
+        (asset.final_amount / (asset.bond_info?.batch || 1));
       if (asset.price_currency === "ARS") {
         total = convertToUsd(total);
       }
@@ -125,6 +124,12 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
         }
         if (b.price_currency === "ARS") {
           bCurrentPrice = convertToUsd(bCurrentPrice);
+        }
+        if (a.bond_info?.batch !== undefined) {
+          purchasePriceA = a.purchase_price * a.bond_info.batch;
+        }
+        if (b.bond_info?.batch !== undefined) {
+          purchasePriceB = b.purchase_price * b.bond_info.batch;
         }
         if (variationType === "percentage") {
           aVariation =
