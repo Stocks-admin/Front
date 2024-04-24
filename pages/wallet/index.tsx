@@ -94,7 +94,7 @@ const Wallet = () => {
         if (curr.price_currency === "ARS") {
           currentPrice = convertToUsd(currentPrice);
         }
-        return acc + currentPrice * (curr.final_amount / batch);
+        return acc + currentPrice * curr.final_amount;
       }, 0);
     }
     return 0;
