@@ -40,15 +40,14 @@ const AssetsTable = ({ assets, currency, variationType }: AssetsTableProps) => {
       if (asset.price_currency === "ARS") {
         currentPrice = convertToUsd(currentPrice);
       }
-      let total =
-        asset.current_price *
-        (asset.final_amount / (asset.bond_info?.batch || 1));
+      let total = asset.current_price * asset.final_amount;
       if (asset.price_currency === "ARS") {
         total = convertToUsd(total);
       }
       let purchasePrice = asset?.purchase_price || 0;
       if (asset.bond_info?.batch !== undefined) {
         purchasePrice = asset.purchase_price * asset.bond_info.batch;
+        currentPrice = currentPrice * asset.bond_info.batch;
       }
       const amount = asset.bond_info?.batch
         ? asset.final_amount / asset.bond_info.batch
