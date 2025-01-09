@@ -3,7 +3,7 @@ name: Create Release on PR
 on:
   pull_request:
     branches: [ "production" ]
-    types: [ opened ]
+    types: [ closed ]
 
 jobs:
   create-release:
