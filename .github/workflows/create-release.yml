@@ -1,0 +1,27 @@
+name: Create Release on PR
+
+on:
+  pull_request:
+    branches: [ "production" ]
+    types: [ opened ]
+
+jobs:
+  create-release:
+    if: startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Extract tag from branch name
+      id: extract_tag
+      run: echo "tag=${GITHUB_HEAD_REF#release/}" >> $GITHUB_ENV
+
+    - name: Create GitHub release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ env.tag }}
+        release_name: Release ${{ env.tag }}
+        body: |
+          This release was automatically created from the pull request: ${{ github.event.pull_request.html_url }}
+        draft: false
+        prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}
